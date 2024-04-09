@@ -1,5 +1,5 @@
-#!/user/bin/env python3
-""" function to add two 2D matrices element-wise """
+#!/usr/bin/env python3
+# """ function to add two 2D matrices element-wise """
 
 
 def add_matrices2D(mat1, mat2):
