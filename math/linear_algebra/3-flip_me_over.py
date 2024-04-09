@@ -3,7 +3,7 @@
 
 
 def matrix_transpose(matrix):
-    # Get the number of rows and columns in the matrix
+    """ Transposes a matrix"""
     rows = len(matrix)
     cols = len(matrix[0])
 
