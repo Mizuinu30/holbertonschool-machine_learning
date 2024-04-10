@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""transposing function for numpy arrays"""
+""" a function that transposes a matrix"""
 
 
 def np_transpose(matrix):
