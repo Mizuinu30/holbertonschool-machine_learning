@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-""" a function that transposes matrix"""
+"""transposing function for numpy arrays"""
 
 
 def np_transpose(matrix):
-    """ Returns a transposed matrix"""
-    return list(map(list, zip(*matrix)))
+    """transposes a numpy array"""
+    return matrix.transpose()
