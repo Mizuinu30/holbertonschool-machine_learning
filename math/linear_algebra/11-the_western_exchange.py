@@ -2,7 +2,10 @@
 """ a function that transposes matrix"""
 
 
-def np_tranpose(matrix):
+import numpy
+
+
+def np_tranpose(matrix) -> numpy.ndarray:
     """ Returns a transposed matrix"""
     return matrix.t
     
