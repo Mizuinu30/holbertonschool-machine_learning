@@ -4,5 +4,4 @@
 
 def np_tranpose(matrix):
     """ Returns a transposed matrix"""
-    return matrix.transposed()
-    
+    return list(map(list, zip(*matrix)))
