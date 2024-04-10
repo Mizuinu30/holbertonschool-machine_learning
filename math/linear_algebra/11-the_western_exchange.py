@@ -2,6 +2,6 @@
 """ a function that transposes matrix"""
 
 
-def np_tranpose(matrix):
+def np_transpose(matrix):
     """ Returns a transposed matrix"""
     return list(map(list, zip(*matrix)))
