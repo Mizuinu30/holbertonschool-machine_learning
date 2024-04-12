@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+""" A Function that slices Matrices on its axes"""
+
+
 def np_slice(matrix, axes={}):
     """Return a manually sliced matrix along specific axes using list slicing."""
     # Ensure matrix is a list of lists
