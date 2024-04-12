@@ -7,4 +7,4 @@ def np_slice(matrix, axes={}):
     slices = [slice(None)] * len(matrix)
     for axis, slice_range in axes.items():
         slices[axis] = slice(*slice_range)
-    return [row[tuple(slices)] for row in matrix]
+    return matrix[tuple(slices)]
