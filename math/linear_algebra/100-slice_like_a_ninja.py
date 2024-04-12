@@ -22,6 +22,6 @@ def np_slice(matrix, axes={}):
         start = col_range[0] if col_range[0] is not None else 0
         stop = col_range[1] if col_range[1] is not None else len(sliced_matrix[0])
         step = col_range[2] if col_range[2] is not None else 1
-        sliced_matrix = [[element for element in row[start:stop:step]] for row in sliced_matrix]
+        sliced_matrix = [row[start:stop:step] for row in sliced_matrix]
         
     return copy.deepcopy(sliced_matrix)
