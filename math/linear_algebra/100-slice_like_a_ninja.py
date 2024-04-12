@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" A Function that slices Matces on its axes"""
+""" A Function that slices Matces on its axes """
 
 
 def np_slice(matrix, axes={}):
