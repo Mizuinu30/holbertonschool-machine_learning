@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+    """ Function to slice a matrix along specific axes using pure Python lists 
+    """
+
 def np_slice(matrix, axes={}):
     """ Return a manually sliced matrix along specific axes using pure Python lists """
     max_dims = 2  # this implementation assumes matrices are 2D (list of lists)
