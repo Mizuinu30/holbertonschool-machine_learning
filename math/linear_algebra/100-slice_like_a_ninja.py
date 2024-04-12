@@ -24,4 +24,4 @@ def np_slice(matrix, axes={}):
         step = col_range[2] if col_range[2] is not None else 1
         sliced_matrix = [row[start:stop:step] for row in sliced_matrix]
         
-    return copy.deepcopy(sliced_matrix)
+    return sliced_matrix
