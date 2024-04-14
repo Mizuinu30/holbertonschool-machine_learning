@@ -10,10 +10,9 @@ def matrix_shape(matrix):
         matrix = matrix[0]
     return shape
 
+
 def add_matrices(mat1, mat2):
     """ returns new matrix that is sum of two matrices added element-wise """
-
-
     if matrix_shape(mat1) != matrix_shape(mat2):
         return None
 
