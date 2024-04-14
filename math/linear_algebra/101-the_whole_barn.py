@@ -11,11 +11,11 @@ def matrix_shape(matrix):
 
 def add_matrices(mat1, mat2):
     """ returns new matrix that is sum of two matrices added element-wise """
-    
+
     # Check if the dimensions of both matrices are the same
     if matrix_shape(mat1) != matrix_shape(mat2):
         return None
-    
+
     # Handle the addition based on the dimensionality of the matrices
     if isinstance(mat1[0], list):  # If the element is a list, proceed recursively
         return [add_matrices(m1, m2) for m1, m2 in zip(mat1, mat2)]
