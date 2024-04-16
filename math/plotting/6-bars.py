@@ -10,11 +10,12 @@ def bars():
     bar_width = 0.5
     names = ['Farrah', 'Fred', 'Felicia']
     colors = ['red', 'yellow', '#ff8000', '#ffe5b4']
-
+    fruit_names = ['Apples', 'Bananas', 'Oranges', 'Peaches']
+    
     for i in range(4):
         plt.bar(names, fruit[i], bar_width, color=colors[i],
-                bottom=np.sum(fruit[:i], axis=0), label=fruit[i])
-    
+                bottom=np.sum(fruit[:i], axis=0), label=fruit_names[i])
+
     plt.ylabel('Quantity of Fruit')
     plt.yticks(np.arange(0, 81, 10))
     plt.title('Number of Fruit per Person')
