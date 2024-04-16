@@ -5,9 +5,7 @@ import matplotlib.pyplot as plt
 
 
 def two():
-    """
-    Function that creates a plot for two radioactive elements
-    """
+    """Function that creates a plot for two radioactive elements"""
     x = np.arange(0, 21000, 1000)
     r = np.log(0.5)
     t1 = 5730
