@@ -2,27 +2,34 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def bars():
-    np.random.seed(5)
-    fruit = np.random.randint(0, 20, (4,3))
-    plt.figure(figsize=(6.4, 4.8))
+np.random.seed(5)
+fruit = np.random.randint(0, 20, (4,3))
 
-    bar_width = 0.5
-    names = ['Farrah', 'Fred', 'Felicia']
-    colors = ['red', 'yellow', '#ff8000', '#ffe5b4']
-    fruit_names = ['Apples', 'Bananas', 'Oranges', 'Peaches']
-    
-    for i in range(4):
-        plt.bar(names, fruit[i], bar_width, color=colors[i],
-                bottom=np.sum(fruit[:i], axis=0), label=fruit_names[i])
-
-    plt.ylabel('Quantity of Fruit')
-    plt.yticks(np.arange(0, 81, 10))
-    plt.title('Number of Fruit per Person')
-
-    plt.legend()
-
-    plt.show()
-
-if __name__ == '__main__':
-    bars()
+people = ['Farrah', 'Fred', 'Felicia']
+fruits = {
+    'apples': 'red',
+    'bananas': 'yellow',
+    'oranges': '#ff8000',
+    'peaches': '#ffe5b4'
+}
+qty = len(people)
+i = 0
+for name, color in sorted(fruits.items()):
+    bottom = 0
+    for i2 in range(i):
+        bottom += fruit[i2]
+    plt.bar(
+        np.arange(qty),
+        fruit[i],
+        width=0.5,
+        bottom=bottom,
+        color=color,
+        label=name
+    )
+    i += 1
+plt.xticks(np.arange(qty), people)
+plt.yticks(np.arange(0, 81, 10))
+plt.ylabel('Quantity of Fruit')
+plt.title('Number of Fruit per Person')
+plt.legend()
+plt.show()
