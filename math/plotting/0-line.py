@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 def line():
     y = np.arange(0, 11) ** 3
-    x = np.arange(0, 11)
+    
     plt.figure(figsize=(6.4, 4.8))
 
     plt.plot(y, 'r-')
