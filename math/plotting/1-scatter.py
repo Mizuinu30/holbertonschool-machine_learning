@@ -14,10 +14,14 @@ def scatter():
     y += 180
     plt.figure(figsize=(6.4, 4.8))
 
-    plt.scatter(x, y, color="magenta", s=10)
-    plt.xlabel('Height (in)')
-    plt.ylabel('weight (lbs)')
-    plt.title("Men's Height vs Weight")
-
+    plt.figure(figsize=(8, 6))  # Adjusting figure size to be more suitable for comparison
+    plt.scatter(x, y, color='magenta', s=10)  # s is the size of the points, set to a standard value for visibility
+    plt.title("Men's Height vs Weight")  # Title of the plot
+    plt.xlabel('Height (in)')  # x-axis label
+    plt.ylabel('Weight (lbs)')  # y-axis label
+    plt.xlim(30, 110)  # Setting x limits to show all data points clearly
+    plt.ylim(100, 260)  # Setting y limits to show all data points clearly
+    plt.show()
+    
 scatter()
    
