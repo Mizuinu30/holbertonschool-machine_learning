@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Generate a bar graph with stacked bars."""
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def bars():
-    """This function generates a stacked bar graph displaying the quantity of fruits per person."""
-    # Set the random seed for reproducibility
+    """This function generates a stacked bar graph displaying
+    the quantity of fruits per person."""
     np.random.seed(5)
 
     fruit_quantities = np.random.randint(0, 20, (4, 3))
