@@ -1,36 +1,27 @@
 #!/usr/bin/env python3
-""" Function that creates a plot bars"""
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 def bars():
-    """ Function that creates a plot bars"""
-np.random.seed(5)
-fruit = np.random.randint(0, 20, (4, 3))
+    np.random.seed(5)
+    fruit = np.random.randint(0, 20, (4,3))
+    plt.figure(figsize=(6.4, 4.8))
 
+    bar_width = 0.5
+    names = ['Farrah', 'Fred', 'Felicia']
+    colors = ['red', 'yellow', '#ff8000', '#ffe5b4']
 
-apples = fruit[0].copy()
-bananas = fruit[1].copy()
-oranges = fruit[2].copy()
-peaches = fruit[3].copy()
+    for i in range(4):
+        plt.bar(names, fruit[i], bar_width, color=colors[i],
+                bottom=np.sum(fruit[:i], axis=0), label=fruit[i])
+    
+    plt.ylabel('Quantity of Fruit')
+    plt.yticks(np.arange(0, 81, 10))
+    plt.title('Number of Fruit per Person')
 
-bars = np.add(apples, bananas).tolist()
-bars2 = np.add(bars, oranges).tolist()
-r = [0, 1, 2]
+    plt.legend()
 
-names = ['Farrah', 'Fred', 'Felicia']
-width = 0.5
+    plt.show()
 
-plt.bar(r, apples, width, color='red', label='apples')
-plt.bar(r, bananas, width, bottom=apples, color='yellow', label='bananas')
-plt.bar(r, oranges, width, bottom=bars, color='#ff8000', label='oranges')
-plt.bar(r, peaches, width, bottom=bars2, color='#ffe5b4', label='peaches')
-
-plt.yticks(range(0, 90, 10))
-plt.xticks(r, names)
-plt.ylabel('Quantity of Fruit')
-plt.suptitle('Number of Fruit per Person')
-plt.legend()
-
-plt.show()
+if __name__ == '__main__':
+    bars()
