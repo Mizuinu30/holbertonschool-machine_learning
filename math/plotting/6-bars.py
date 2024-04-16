@@ -1,35 +1,36 @@
 #!/usr/bin/env python3
-""" plot a stacked bar chart for the amount and types of fruit people have """
+""" Function that creates a plot bars"""
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+def bars():
+    """ Function that creates a plot bars"""
 np.random.seed(5)
 fruit = np.random.randint(0, 20, (4, 3))
 
-people = ['Farrah', 'Fred', 'Felicia']
-fruit_names = {
-    'apples': 'red',
-    'bananas': 'yellow',
-    'oranges': '#ff8000',
-    'peaches': '#ffe5b4'
-}
 
-i = 0
-for name, color in sorted(fruit_names.items()):
-    bottom = 0
-    for j in range(i):
-        bottom += fruit[j]
-    plt.bar(
-        np.arange(len(people)),
-        fruit[i],
-        width=0.5,
-        bottom=bottom,
-        color=color,
-        label=name)
-    i += 1
-plt.xticks(np.arange(len(people)), people)
-plt.yticks(np.arange(0, 81, 10))
+apples = fruit[0].copy()
+bananas = fruit[1].copy()
+oranges = fruit[2].copy()
+peaches = fruit[3].copy()
+
+bars = np.add(apples, bananas).tolist()
+bars2 = np.add(bars, oranges).tolist()
+r = [0, 1, 2]
+
+names = ['Farrah', 'Fred', 'Felicia']
+width = 0.5
+
+plt.bar(r, apples, width, color='red', label='apples')
+plt.bar(r, bananas, width, bottom=apples, color='yellow', label='bananas')
+plt.bar(r, oranges, width, bottom=bars, color='#ff8000', label='oranges')
+plt.bar(r, peaches, width, bottom=bars2, color='#ffe5b4', label='peaches')
+
+plt.yticks(range(0, 90, 10))
+plt.xticks(r, names)
 plt.ylabel('Quantity of Fruit')
-plt.title("Number of Fruit per Person")
+plt.suptitle('Number of Fruit per Person')
 plt.legend()
+
 plt.show()
