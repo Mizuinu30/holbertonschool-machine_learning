@@ -17,9 +17,12 @@ def bars():
                 bottom=np.sum(fruit[:i], axis=0), label=fruit_names[i])
 
     plt.ylabel('Quantity of Fruit')
-    plt.yticks(np.arange(0, 80, 10))
+    plt.yticks(np.arange(0, 81, 10))
     plt.title('Number of Fruit per Person')
 
     plt.legend()
 
     plt.show()
+
+if __name__ == '__main__':
+    bars()
