@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 def scatter():
     """Function that creates a scatter plot of the data"""
-    
+
     mean = [69, 0]
     cov = [[15, 8], [8, 15]]
     np.random.seed(5)
@@ -22,4 +22,3 @@ def scatter():
     plt.title("Men's Height vs Weight")
 
     plt.show()
-    
