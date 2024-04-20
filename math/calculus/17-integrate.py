@@ -4,8 +4,6 @@
 
 def poly_integral(poly, C=0):
     """Calculate the integral of a polynomial"""
-
-
     # Validate input types
     if not isinstance(poly, list) or not poly:
         return None
@@ -24,7 +22,8 @@ def poly_integral(poly, C=0):
     integral = [C]
     for power, coeff in enumerate(poly):
         new_coeff = coeff / (power + 1)
-        integral.append(int(new_coeff) if new_coeff.is_integer() else new_coeff)
+        integral.append(int(new_coeff) if new_coeff.is_integer()
+                        else new_coeff)
 
     # Remove trailing zeros
     while len(integral) > 1 and integral[-1] == 0:
