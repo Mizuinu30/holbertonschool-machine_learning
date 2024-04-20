@@ -3,7 +3,7 @@
 
 
 def summation_i_squared(n):
-    """ Function that calculates the sum of the squares 
+    """ Function that calculates the sum of the squares
     of the first n integers"""
     if not isinstance(n, int) or n < 1:
         return None
