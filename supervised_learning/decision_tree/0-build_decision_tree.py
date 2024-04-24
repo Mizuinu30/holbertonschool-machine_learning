@@ -4,6 +4,7 @@
 
 import numpy as np
 
+
 class Node:
     """ Node of the decision tree"""
     def __init__(self, feature=None, threshold=None, left_child=None,
@@ -31,6 +32,7 @@ class Node:
 
         return local_max
 
+
 class Leaf(Node):
     """ Leaf node of the decision tree"""
     def __init__(self, value, depth=None):
@@ -44,9 +46,11 @@ class Leaf(Node):
         """ Calculate the maximum depth below this node"""
         return self.depth
 
+
 class Decision_Tree():
     """ Class that builds a decision tree"""
-    def __init__(self, max_depth=10, min_pop=1, seed=0, split_criterion="random", root=None):
+    def __init__(self, max_depth=10, min_pop=1,
+                 seed=0, split_criterion="random", root=None):
         self.rng = np.random.default_rng(seed)
         if root:
             self.root = root
@@ -59,6 +63,6 @@ class Decision_Tree():
         self.split_criterion = split_criterion
         self.predict = None
 
-    def depth(self) :
+    def depth(self):
         """ Calculate the depth of the tree"""
         return self.root.max_depth_below()
