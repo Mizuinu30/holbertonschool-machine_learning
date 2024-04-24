@@ -34,23 +34,19 @@ class Node:
 
     def count_nodes_below(self, only_leaves=False):
         """ Count the number of nodes below this node"""
-        stack = [self]
-        count = 0
+        if only_leaves:
+            count = 0
+        else:
+            count = 1
 
-        while stack:
-            node = stack.pop()
-            if only_leaves:
-                if node.left_child is None and node.right_child is None:
-                    count += 1
-            else:
-                count += 1
+        if self.left_child:
+            count += self.left_child.count_nodes_below(only_leaves=only_leaves)
 
-            if node.left_child:
-                stack.append(node.left_child)
-            if node.right_child:
-                stack.append(node.right_child)
+        if self.right_child:
+            count += self.right_child.count_nodes_below\
+                (only_leaves=only_leaves)
 
-        return count - 1
+        return count
 
 
 class Leaf(Node):
