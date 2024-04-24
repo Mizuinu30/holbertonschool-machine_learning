@@ -34,7 +34,10 @@ class Node:
 
     def count_nodes_below(self, only_leaves=False):
         """ Count the number of nodes below this node"""
-        count = 1
+        if only_leaves:
+            count = 0
+        else:
+            count = 1
 
         if self.left_child:
             count += self.left_child.count_nodes_below(only_leaves=only_leaves)
