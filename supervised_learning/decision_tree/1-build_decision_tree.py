@@ -34,19 +34,23 @@ class Node:
 
     def count_nodes_below(self, only_leaves=False):
         """ Count the number of nodes below this node"""
-        if only_leaves:
-            count = 0
-        else:
-            count = 1
+        stack = [self]
+        count = 0
 
-        if self.left_child:
-            count += self.left_child.count_nodes_below(only_leaves=only_leaves)
+        while stack:
+            node = stack.pop()
+            if only_leaves:
+                if node.left_child is None and node.right_child is None:
+                    count += 1
+            else:
+                count += 1
 
-        if self.right_child:
-            count += self.right_child.count_nodes_below\
-                (only_leaves=only_leaves)
+            if node.left_child:
+                stack.append(node.left_child)
+            if node.right_child:
+                stack.append(node.right_child)
 
-        return count
+        return count - 1
 
 
 class Leaf(Node):
@@ -87,6 +91,6 @@ class Decision_Tree():
         """ Calculate the depth of the tree"""
         return self.root.max_depth_below()
 
-    def count_nodes(self, only_leaves=False) :
+    def count_nodes(self, only_leaves=False):
         """ Count the number of nodes in the tree"""
         return self.root.count_nodes_below(only_leaves=only_leaves)
