@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """ Module that builds a decision tree """
+
+
 import numpy as np
 
 class Node:
@@ -39,6 +41,7 @@ class Leaf(Node):
         self.depth = depth
 
     def max_depth_below(self) :
+        """ Calculate the maximum depth below this node"""
         return self.depth
 
 class Decision_Tree():
