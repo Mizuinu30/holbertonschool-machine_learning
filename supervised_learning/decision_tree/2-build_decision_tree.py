@@ -6,7 +6,7 @@ import numpy as np
 
 class Node:
     """ Node of the decision tree"""
-    def __init__(self, feature=None, threshold=None, left_child=None,
+    def __init__(self, depth=0, feature=None, threshold=None, left_child=None,
                  right_child=None, is_root=False):
         self.feature = feature
         self.threshold = threshold
@@ -61,7 +61,7 @@ class Node:
 class Leaf(Node):
     """ Leaf node of the decision tree"""
     def __init__(self, value, depth=None):
-        super().__init__()
+        super().__init__(depth=depth)
         self.value = value
         self.is_leaf = True
         self.depth = depth
