@@ -35,17 +35,17 @@ class Node:
     def left_child_add_prefix(self,text):
         """ Add prefix to the left child"""
         lines=text.split("\n")
-        new_text="    +--" + lines[0] + "\n"
+        new_text="    +--"+lines[0] + "\n"
         for x in lines[1:] :
-            new_text+=("    |  " + x) + "\n"
+            new_text+=("    |  "+x) + "\n"
         return (new_text)
 
     def right_child_add_prefix(self, text):
         """ Add prefix to the right child"""
         lines = text.split("\n")
-        new_text = "    `--" + lines[0] + "\n"
-        for x in lines[1:]:
-            new_text += ("     " + x) + "\n"
+        new_text = "    --+"+lines[0]+"\n"
+        for x in lines[1:] :
+            new_text+=("     "+x)+"\n"
         return (new_text)
 
     def count_nodes_below(self, only_leaves=False):
