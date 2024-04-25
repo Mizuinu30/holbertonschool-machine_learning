@@ -136,7 +136,7 @@ class Leaf(Node):
         return f"-> leaf [value={self.value}]"
 
 
-class DecisionTree:
+class Decision_Tree:
     """
     Represents the overall decision tree structure capable of
     making predictions based on input features.
