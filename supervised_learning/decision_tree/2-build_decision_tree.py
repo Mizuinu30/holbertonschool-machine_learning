@@ -11,13 +11,16 @@ class Node:
         self.threshold = threshold
         self.left_child = left_child
         self.right_child = right_child
-        self.is_leaf = False
         self.is_root = is_root
         self.depth = depth
 
+    def is_leaf(self):
+        """ Determine if this node is a leaf node """
+        return not (self.left_child or self.right_child)
+
     def __str__(self):
         """ Return the string representation of the node """
-        if self.is_leaf:
+        if self.is_leaf():
             return (f"-> leaf [value={self.value}]")
         else:
             node_desc = f"-> node [feature={self.feature}, threshold={self.threshold}]\n"
@@ -48,7 +51,6 @@ class Leaf(Node):
     def __init__(self, value, depth=0):
         super().__init__(depth=depth)
         self.value = value
-        self.is_leaf = True
 
     def __str__(self):
         """ Return the string representation of the leaf """
