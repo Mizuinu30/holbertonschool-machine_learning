@@ -118,7 +118,7 @@ class Decision_Tree():
 
     def __str__(self):
         """ String representation of the decision tree"""
-        return self.root.__str__()
+        return self.root.__str__(is_root=True)
 
     def depth(self):
         """ Calculate the depth of the tree"""
