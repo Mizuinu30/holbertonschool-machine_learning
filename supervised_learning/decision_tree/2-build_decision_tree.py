@@ -64,20 +64,17 @@ class Node:
 
         return count
 
-
-
     def __str__(self):
         """ Return the string representation of the node"""
         if self.is_leaf:
-            return (f"-> leaf [value={self.value}] ")
+            return (f"leaf [value={self.value}]")
         else:
-            result = (f"-> node [feature={self.feature}, threshold={self.threshold}] ")
+            result = (f"node [feature={self.feature}, threshold={self.threshold}]")
             if self.left_child:
-                result += "\n    +-- " + str(self.left_child).replace("\n", "\n    |  ")
+                result += "\n    +--" + str(self.left_child).replace("\n", "\n    |  ")
             if self.right_child:
-                result += "\n    +-- " + str(self.right_child).replace("\n", "\n       ")
+                result += "\n    +--" + str(self.right_child).replace("\n", "\n       ")
             return result
-
 
 class Leaf(Node):
     """ Leaf node of the decision tree"""
@@ -88,17 +85,11 @@ class Leaf(Node):
         self.is_leaf = True
         self.depth = depth
 
+
     def __str__(self):
         """ Return the string representation of the node"""
-        if self.is_leaf:
-            return (f"-> leaf [value={self.value}] ")
-        else:
-            result = (f"-> node [feature={self.feature}, threshold={self.threshold}] ")
-            if self.left_child:
-                result += "\n    +-- " + str(self.left_child).replace("\n", "\n    |  ")
-            if self.right_child:
-                result += "\n    +-- " + str(self.right_child).replace("\n", "\n       ")
-            return result
+        return (f"leaf [value={self.value}]")
+
 
     def max_depth_below(self):
         """ Calculate the maximum depth below this node"""
