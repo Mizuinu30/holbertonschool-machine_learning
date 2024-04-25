@@ -72,11 +72,12 @@ class Leaf(Node):
 
     def count_nodes_below(self, only_leaves=False):
         """ Count the number of nodes below this node"""
-        return 1
+        return 1 if only_leaves else 0
 
     def __str__(self):
         """ String representation of a leaf node """
         return f"-> leaf [value={self.value}] "
+
 
 class Decision_Tree():
     """ Class that builds a decision tree"""
