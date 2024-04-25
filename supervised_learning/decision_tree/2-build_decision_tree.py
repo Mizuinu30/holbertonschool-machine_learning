@@ -73,10 +73,18 @@ class Leaf(Node):
         self.value = value
         self.is_leaf = True
         self.depth = depth
- 
+
     def __str__(self):
-        """ String representation of the leaf node"""
-        return (f"-> leaf [value={self.value}] ")
+        """ Return the string representation of the node"""
+        if self.is_leaf:
+            return (f"-> leaf [value={self.value}] ")
+        else:
+            result = (f"-> node [feature={self.feature}, threshold={self.threshold}] ")
+            if self.left_child:
+                result += "\n    +-- " + str(self.left_child).replace("\n", "\n    |  ")
+            if self.right_child:
+                result += "\n    +-- " + str(self.right_child).replace("\n", "\n       ")
+            return result
 
     def max_depth_below(self):
         """ Calculate the maximum depth below this node"""
