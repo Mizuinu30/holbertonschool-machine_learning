@@ -64,16 +64,17 @@ class Node:
 
         return count
 
-    def __str__(self):
+    def __str__(self, is_root=False):
         """ Return the string representation of the node"""
         if self.is_leaf:
             return (f"leaf [value={self.value}]")
         else:
-            result = (f"node [feature={self.feature}, threshold={self.threshold}]")
+            node_label = "root" if is_root else "node"
+            result = (f"{node_label} [feature={self.feature}, threshold={self.threshold}]")
             if self.left_child:
-                result += "\n    +--" + str(self.left_child).replace("\n", "\n    |  ")
+                result += "\n    +---> " + str(self.left_child).replace("\n", "\n    |  ")
             if self.right_child:
-                result += "\n    +--" + str(self.right_child).replace("\n", "\n       ")
+                result += "\n    +---> " + str(self.right_child).replace("\n", "\n       ")
             return result
 
 class Leaf(Node):
@@ -83,7 +84,6 @@ class Leaf(Node):
         super().__init__()
         self.value = value
         self.is_leaf = True
-        self.depth = depth
 
 
     def __str__(self):
