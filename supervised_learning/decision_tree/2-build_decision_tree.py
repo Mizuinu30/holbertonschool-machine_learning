@@ -65,6 +65,20 @@ class Node:
         return count
 
 
+
+    def __str__(self):
+        """ Return the string representation of the node"""
+        if self.is_leaf:
+            return (f"-> leaf [value={self.value}] ")
+        else:
+            result = (f"-> node [feature={self.feature}, threshold={self.threshold}] ")
+            if self.left_child:
+                result += "\n    +-- " + str(self.left_child).replace("\n", "\n    |  ")
+            if self.right_child:
+                result += "\n    +-- " + str(self.right_child).replace("\n", "\n       ")
+            return result
+
+
 class Leaf(Node):
     """ Leaf node of the decision tree"""
     def __init__(self, value, depth=None):
