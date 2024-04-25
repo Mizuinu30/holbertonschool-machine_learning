@@ -13,36 +13,8 @@ class Node:
         self.sub_population = None
         self.depth = depth
 
-    def max_depth_below(self):
-        if self.is_leaf:
-            return self.depth
-        max_depth = self.depth
-        if self.left_child:
-            max_depth = max(max_depth, self.left_child.max_depth_below())
-        if self.right_child:
-            max_depth = max(max_depth, self.right_child.max_depth_below())
-        return max_depth
-
-    def count_nodes_below(self, only_leaves=False):
-        if only_leaves:
-            if self.is_leaf:
-                return 1
-            count = 0
-            if self.left_child:
-                count += self.left_child.count_nodes_below(only_leaves=True)
-            if self.right_child:
-                count += self.right_child.count_nodes_below(only_leaves=True)
-            return count
-        else:
-            count = 1
-            if self.left_child:
-                count += self.left_child.count_nodes_below()
-            if self.right_child:
-                count += self.right_child.count_nodes_below()
-            return count
-
     def __str__(self):
-        node_repr = f"[Feature={self.feature}, Threshold={self.threshold}]"
+        node_repr = f"node [feature={self.feature}, threshold={self.threshold}]"
         parts = [node_repr]
         if self.left_child:
             left_str = self.left_child_add_prefix(self.left_child.__str__())
@@ -74,7 +46,7 @@ class Leaf(Node):
         self.depth = depth
 
     def __str__(self):
-        return f"-> leaf [value={self.value}] "
+        return f"leaf [value={self.value}] "
 
 class Decision_Tree:
     def __init__(self, max_depth=10, min_pop=1, seed=0, split_criterion="random", root=None):
@@ -89,12 +61,6 @@ class Decision_Tree:
         self.min_pop = min_pop
         self.split_criterion = split_criterion
         self.predict = None
-
-    def depth(self):
-        return self.root.max_depth_below()
-
-    def count_nodes(self, only_leaves=False):
-        return self.root.count_nodes_below(only_leaves=only_leaves)
 
     def __str__(self):
         return self.root.__str__()
