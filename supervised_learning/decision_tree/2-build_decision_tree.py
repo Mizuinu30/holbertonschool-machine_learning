@@ -75,8 +75,8 @@ class Leaf(Node):
         return 1 if only_leaves else 0
 
     def __str__(self):
-        """ String representation of a leaf node """
-        return f"-> leaf [value={self.value}] "
+        """ String representation of a node """
+        return f"node [feature={self.feature}, threshold={self.threshold}]"
 
 
 class Decision_Tree():
@@ -97,5 +97,8 @@ class Decision_Tree():
         return self.root.count_nodes_below(only_leaves=only_leaves)
 
     def __str__(self):
-        """ String representation of the decision tree """
-        return str(self.root)
+        """ String representation of a leaf node """
+        if hasattr(self, 'value'):
+            return f"leaf [value={self.value}]"
+        else:
+            return "leaf"
