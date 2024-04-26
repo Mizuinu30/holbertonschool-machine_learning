@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+""" Module that builds a decision tree"""
+
+
 import numpy as np
 
 class Node:
