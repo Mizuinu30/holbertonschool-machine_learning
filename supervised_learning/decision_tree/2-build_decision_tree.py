@@ -48,14 +48,14 @@ class Node:
     def left_child_add_prefix(self, text):
         lines = text.split("\n")
         new_text = "    +---> " + lines[0] + "\n"
-        for x in lines[1:-1]:
+        for x in lines[1:]:
             new_text += "    |     " + x + "\n"
         return new_text
 
     def right_child_add_prefix(self, text):
         lines = text.split("\n")
         new_text = "    +---> " + lines[0] + "\n"
-        for x in lines[1:-1]:
+        for x in lines[1:]:
             new_text += "         " + x + "\n"
         return new_text
 
