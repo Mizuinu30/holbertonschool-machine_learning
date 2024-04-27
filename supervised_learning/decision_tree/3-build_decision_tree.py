@@ -4,15 +4,8 @@ import numpy as np
 
 
 class Node:
-    """representing a node in a decision tree
-    Attributes:
-        feature: int representing the index of the feature to make a decision
-        threshold: float threshold for the feature
-        left_child: left node in the decision tree
-        right_child: right node in the decision tree
-        is_leaf: bool indicating if the node is a leaf
-        is_root: bool indicating if the node is the root
-        depth: depth of the node in the tree"""
+    """representing a node in a decision tree"""
+
     def __init__(self, feature=None, threshold=None, left_child=None,
                  right_child=None, is_root=False, depth=0):
         self.feature = feature
@@ -33,14 +26,7 @@ class Node:
                        self.right_child.max_depth_below())
 
     def count_nodes_below(self, only_leaves=False):
-        """Calculate the number of nodes below this node.
-
-        Args:
-        only_leaves: bool indicating if only leaves should be counted
-
-        Returns:
-            int representing the number of nodes below this node
-        """
+        """Calculate the number of nodes below this node"""
         if only_leaves:
             return (self.left_child.count_nodes_below(only_leaves=True) +
                     self.right_child.count_nodes_below(only_leaves=True))
@@ -49,9 +35,7 @@ class Node:
                     self.right_child.count_nodes_below())
 
     def left_child_add_prefix(self, text):
-        """print the left child with the correct prefix
-        split at line breaks, add spaces, +, --, |,
-        and then join the lines back together"""
+        """print the left child with the correct prefix"""
         lines = text.split("\n")
         new_text = "    +--"+lines[0]+"\n"
         for x in lines[1:]:
@@ -59,8 +43,7 @@ class Node:
         return (new_text)
 
     def right_child_add_prefix(self, text):
-        """print the right child with the correct prefix
-        split at line breaks"""
+        """print the right child with the correct prefix"""
         lines = text.split("\n")
         new_text = "    +--" + lines[0]
         for x in lines[1:]:
@@ -93,6 +76,7 @@ class Node:
 
 class Leaf(Node):
     """representing a leaf in a decision tree"""
+
     def __init__(self, value, depth=None):
         super().__init__()
         self.value = value
@@ -117,6 +101,7 @@ class Leaf(Node):
 
 class Decision_Tree():
     """representing a decision tree"""
+
     def __init__(self, max_depth=10, min_pop=1, seed=0,
                  split_criterion="random", root=None):
         self.rng = np.random.default_rng(seed)
