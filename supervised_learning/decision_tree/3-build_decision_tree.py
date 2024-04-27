@@ -60,8 +60,7 @@ class Node:
 
     def right_child_add_prefix(self, text):
         """print the right child with the correct prefix
-        split at line breaks, add spaces, +, --, but no |
-        and then join the lines back together"""
+        split at line breaks"""
         lines = text.split("\n")
         new_text = "    +--" + lines[0]
         for x in lines[1:]:
@@ -93,10 +92,7 @@ class Node:
 
 
 class Leaf(Node):
-    """representing a leaf in a decision tree
-    Attributes:
-        value: value to be returned when the leaf is reached
-        depth: depth of the node in the tree"""
+    """representing a leaf in a decision tree"""
     def __init__(self, value, depth=None):
         super().__init__()
         self.value = value
@@ -118,18 +114,8 @@ class Leaf(Node):
         """Get all the leaves below this node."""
         return [self]
 
-
 class Decision_Tree():
-    """representing a decision tree
-    Attributes:
-        root: root node of the decision tree
-        explanatory: numpy.ndarray of shape (m, n) containing the input data
-        target: numpy.ndarray of shape (m,) containing the target data
-        max_depth: int representing the maximum depth of the tree
-        min_pop: int representing the minimum number of data points in a node
-        seed: int for the random number generator
-        split_criterion: string representing the type of split criterion
-        predict: method to predict the value of a data point"""
+    """representing a decision tree"""
     def __init__(self, max_depth=10, min_pop=1, seed=0,
                  split_criterion="random", root=None):
         self.rng = np.random.default_rng(seed)
@@ -151,7 +137,6 @@ class Decision_Tree():
     def count_nodes(self, only_leaves=False):
         """Calculate the number of nodes in the decision tree."""
         return self.root.count_nodes_below(only_leaves=only_leaves)
-
 
     def __str__(self):
         """print the root node"""
