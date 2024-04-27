@@ -21,14 +21,13 @@ class Node:
 
     def update_indicator(self):
         """ Updates the indicator for the current node. """
-        def is_large_enough():
-            return np.all([np.greater_equal(x[:key], self.lower[key]) for key in self.lower.keys()], axis=0)
+        def is_large_enough(x):
+            return np.all([np.greater_equal(x[:, key], self.lower[key]) for key in self.lower.keys()], axis=0)
 
         def is_small_enough(x):
-            return np.all([np.less_equal(x[:key], self.upper[key]) for key in self.upper.keys()], axis=0)
+            return np.all([np.less_equal(x[:, key], self.upper[key]) for key in self.upper.keys()], axis=0)
 
         self.indicator = lambda x: np.all(np.array([is_large_enough(x), is_small_enough(x)]), axis=0)
-
 
 
     def max_depth_below(self):
