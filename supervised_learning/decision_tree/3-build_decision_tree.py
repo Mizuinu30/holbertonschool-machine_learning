@@ -114,6 +114,7 @@ class Leaf(Node):
         """Get all the leaves below this node."""
         return [self]
 
+
 class Decision_Tree():
     """representing a decision tree"""
     def __init__(self, max_depth=10, min_pop=1, seed=0,
@@ -145,3 +146,4 @@ class Decision_Tree():
     def get_leaves(self):
         """Get all the leaves in the tree."""
         return self.root.get_leaves_below()
+    
