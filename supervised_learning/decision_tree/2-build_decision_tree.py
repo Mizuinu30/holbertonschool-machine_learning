@@ -29,15 +29,19 @@ class Node:
             return self.left_child.count_nodes_below(True) + self.right_child.count_nodes_below(True)
         return 1 + self.left_child.count_nodes_below() + self.right_child.count_nodes_below()
 
-    def left_child_add_prefix(self, text):
-        """ Prefixes text visualization for the left child. """
-        lines = text.split("\n")
-        return "    +--" + lines[0] + "\n" + "\n".join("    |  " + line for line in lines[1:])
+    def left_child_add_prefix(self,text):
+        lines=text.split("\n")
+        new_text="    +--"+lines[0]+"\n"
+        for x in lines[1:] :
+            new_text+=("    |  "+x)+"\n"
+        return (new_text)
 
-    def right_child_add_prefix(self, text):
-        """ Prefixes text visualization for the right child. """
-        lines = text.split("\n")
-        return "    +--" + lines[0] + "\n" + "\n".join("      " + line for line in lines[1:])
+    def right_child_add_prefix(self,text):
+        lines=text.split("\n")
+        new_text="    +--"+lines[0]+"\n"
+        for x in lines[1:] :
+            new_text+=("    |  "+x)+"\n"
+        return (new_text)
 
     def __str__(self):
         """ String representation of this node. """
