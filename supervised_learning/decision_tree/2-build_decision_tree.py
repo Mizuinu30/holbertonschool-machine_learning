@@ -36,12 +36,14 @@ class Node:
             new_text+=("    |  "+x)+"\n"
         return (new_text)
 
-    def right_child_add_prefix(self,text):
-        lines=text.split("\n")
-        new_text="    +--"+lines[0]+"\n"
-        for x in lines[1:] :
-            new_text+=("    |  "+x)+"\n"
-        return (new_text)
+    def right_child_add_prefix(self, text):
+        """print the right child with the correct prefix
+        split at line breaks"""
+        lines = text.split("\n")
+        new_text = "    +--" + lines[0]
+        for x in lines[1:]:
+            new_text += "\n      " + x
+        return new_text
 
     def __str__(self):
         """ String representation of this node. """
