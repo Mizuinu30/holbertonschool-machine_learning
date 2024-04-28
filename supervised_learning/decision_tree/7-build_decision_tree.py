@@ -238,16 +238,23 @@ class Decision_Tree():
         """ Return the minimum and maximum of an array"""
         return np.min(arr), np.max(arr)
 
-    def random_split_criterion(self,node):
-        """ Randomly select a feature and a threshold"""
-        diff=0
-        while diff==0 :
-            feature=self.rng.integers(0,self.explanatory.shape[1])
-            feature_min,feature_max=self.np_extrema(self.explanatory[:,feature][node.sub_population])
-            diff=feature_max-feature_min
-        x=self.rng.uniform()
-        threshold= (1-x)*feature_min + x*feature_max
-        return feature,threshold
+    def random_split_criterion(self, node):
+        diff = 0
+        attempts = 0
+        max_attempts = self.explanatory.shape[1] * 2  # Twice the number of features
+
+        while diff == 0 and attempts < max_attempts:
+            feature = self.rng.integers(0, self.explanatory.shape[1])
+            feature_min, feature_max = self.np_extrema(self.explanatory[:, feature][node.sub_population])
+            diff = feature_max - feature_min
+            attempts += 1
+
+        if attempts == max_attempts:
+            raise ValueError("Unable to find a feature with non-zero range after {} attempts".format(max_attempts))
+
+        x = self.rng.uniform()
+        threshold = (1 - x) * feature_min + x * feature_max
+        return feature, threshold
 
     def fit_node(self, node):
         """ Fit a node in the decision tree"""
