@@ -50,7 +50,7 @@ class Node:
     def __str__(self):
         """ string representation of the node"""
         node_str = (f"root [feature={self.feature}, threshold={self.threshold}]\n"
-                if self.is_root else f"-> Node [feature={self.feature}, threshold={self.threshold}]\n")
+                if self.is_root else f"-> node [feature={self.feature}, threshold={self.threshold}]\n")
         
         left_str = self.left_child_add_prefix(
             self.left_child.__str__()) if self.left_child else ""
