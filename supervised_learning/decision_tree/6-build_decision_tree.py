@@ -15,25 +15,6 @@ class Node:
         self.is_root = is_root
         self.sub_population = None
         self.depth = depth
-        self.lower = {}
-        self.upper = {}
-        self.indicator = None
-
-    def update_indicator(self):
-        """ Updates the indicator for the current node. """
-        def is_large_enough(x):
-            return np.all([np.greater_equal(x[:, key],
-                                            self.lower[key]) for key
-                           in self.lower.keys()], axis=0)
-
-        def is_small_enough(x):
-            return np.all([np.less_equal(x[:, key],
-                                         self.upper[key]) for key
-                           in self.upper.keys()], axis=0)
-
-        self.indicator = lambda x: np.all(np.array([is_large_enough(x),
-                                                    is_small_enough(x)]),
-                                          axis=0)
 
     def max_depth_below(self):
         """calculate the maximum depth below the current node"""
@@ -65,7 +46,7 @@ class Node:
         lines = text.split("\n")
         new_text = "    +--" + lines[0]
         for x in lines[1:]:
-            new_text += "\n      " + x
+            new_text += "\n       " + x
         return new_text
 
     def __str__(self):
@@ -112,21 +93,32 @@ class Node:
             if child is not None:
                 child.update_bounds_below()
 
-    def add_child(self, node, direction):
-        """Add a child node to the current node."""
-        if direction == 'left':
-            self.left_child = node
-        elif direction == 'right':
-            self.right_child = node
-        else:
-            raise ValueError("Direction must be either 'left' or 'right'.")
+    def update_indicator(self):
+        """Update the indicator function of the leaves
+        below the current node."""
+
+        def is_large_enough(x):
+            """returns a 1Darray of size `n_individuals`"""
+            lower_bounds = np.array([self.lower.get(i, -np.inf)
+                                     for i in range(x.shape[1])])
+            return np.all(x > lower_bounds, axis=1)
+
+        def is_small_enough(x):
+            """ returns a 1Darray of size `n_individuals`"""
+            upper_bounds = np.array([self.upper.get(i, np.inf)
+                                     for i in range(x.shape[1])])
+            return np.all(x <= upper_bounds, axis=1)
+
+
+        self.indicator = lambda x: np.all(np.array(
+            [is_large_enough(x), is_small_enough(x)]), axis=0)
 
     def pred(self, x):
-        """Predict the value for a given input."""
+        """predict the value of a data point"""
         if x[self.feature] > self.threshold:
-            return self.left_child.pred(x)
-        else:
             return self.right_child.pred(x)
+        else:
+            return self.left_child.pred(x)
 
 
 class Leaf(Node):
@@ -156,10 +148,11 @@ class Leaf(Node):
         """update the bounds of the leaf"""
         pass
 
-    def set_value(self, value):
-        """Set the value of the leaf."""
-        self.value = value
-        
+    def pred(self, x):
+        """predict the value of a data point"""
+        return self.value
+
+
 class Decision_Tree():
     """representing a decision tree"""
     def __init__(self, max_depth=10, min_pop=1, seed=0,
@@ -176,14 +169,6 @@ class Decision_Tree():
         self.split_criterion = split_criterion
         self.predict = None
 
-    def update_predict(self):
-        """ Update the predict function of the decision tree."""
-        self.update_bounds()
-        leaves = self.get_leaves()
-        for leaf in leaves:
-            leaf.update_indicator()
-        self.predict = lambda A: np.argmax(np.array([leaf.indicator(A) for leaf in leaves]), axis=0)    
-    
     def depth(self):
         """calculate the depth of the decision tree"""
         return self.root.max_depth_below()
@@ -204,10 +189,15 @@ class Decision_Tree():
         """update the bounds of the leaves in the tree"""
         self.root.update_bounds_below()
 
-    def set_root(self, node):
-        """Set the root of the decision tree."""
-        self.root = node
+    def update_predict(self):
+        """update the predict method of the decision tree"""
+        self.update_bounds()
+        leaves = self.get_leaves()
+        for leaf in leaves:
+            leaf.update_indicator()
+        self.predict = lambda A: np.array([self.pred(x) for x in A])
 
     def pred(self, x):
-        """Predict the value for a given input."""
+        """predict the value of a data point"""
         return self.root.pred(x)
+    
