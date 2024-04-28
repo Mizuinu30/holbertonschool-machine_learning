@@ -1,12 +1,25 @@
 #!/usr/bin/env python3
-"""depth of a decision tree"""
+""" Decision Tree """
 import numpy as np
 
 
 class Node:
-    """ represent a node in a decision tree"""
+    """
+    Class that represents a decision tree node
+    """
+
     def __init__(self, feature=None, threshold=None, left_child=None,
                  right_child=None, is_root=False, depth=0):
+        """
+        Class constructor for Node class
+        Args:
+            feature (_type_, optional): _description_. Defaults to None.
+            threshold (_type_, optional): _description_. Defaults to None.
+            left_child (_type_, optional): _description_. Defaults to None.
+            right_child (_type_, optional): _description_. Defaults to None.
+            is_root (bool, optional): _description_. Defaults to False.
+            depth (int, optional): _description_. Defaults to 0.
+        """
         self.feature = feature
         self.threshold = threshold
         self.left_child = left_child
@@ -17,64 +30,113 @@ class Node:
         self.depth = depth
 
     def max_depth_below(self):
-        """calculate the maximum depth below the current node"""
-        if self.is_leaf:
+        """
+        Method that calculates the maximum depth of the current node
+        Returns:
+            int: maximum depth of the current node
+        """
+        # If the node is a leaf, its max depth is its own depth
+        if not self.left_child and not self.right_child:
             return self.depth
-        else:
-            return max(self.left_child.max_depth_below(),
-                       self.right_child.max_depth_below())
+
+        # Initialize depths assuming the current node is the deepest
+        left_depth = self.depth
+        right_depth = self.depth
+
+        # Recursively find the max depth of the left subtree
+        if self.left_child is not None:
+            left_depth = self.left_child.max_depth_below()
+
+        # Recursively find the max depth of the right subtree
+        if self.right_child is not None:
+            right_depth = self.right_child.max_depth_below()
+
+        # Return the maximum of left and right depths
+        return max(left_depth, right_depth)
 
     def count_nodes_below(self, only_leaves=False):
-        """Calculate the number of nodes below this node"""
-        if only_leaves:
-            return (self.left_child.count_nodes_below(only_leaves=True) +
-                    self.right_child.count_nodes_below(only_leaves=True))
-        else:
-            return (1 + self.left_child.count_nodes_below() +
-                    self.right_child.count_nodes_below())
+        """
+        Method that counts the number of nodes below the current node
+        Args:
+            only_leaves (bool, optional): _description_. Defaults to False.
+        Returns:
+            int: number of nodes below the current node
+        """
+        # If we are only counting leaves and this is not a leaf,
+        # return count from children
+        if only_leaves and not self.is_leaf:
+            return (self.left_child.count_nodes_below(only_leaves=True)
+                    if self.left_child else 0) + \
+                (self.right_child.count_nodes_below(only_leaves=True)
+                 if self.right_child else 0)
 
-    def left_child_add_prefix(self, text):
-        """print the left child with the correct prefix
-        split at line breaks, add spaces, +, --, |,
-        and then join the lines back together"""
-        lines = text.split("\n")
-        new_text = "    +--"+lines[0]+"\n"
-        for x in lines[1:]:
-            new_text += ("    |  "+x)+"\n"
-        return (new_text)
+        # If we are counting all nodes, or this is a leaf node,
+        # start with 1 (this node)
+        count = 1 if not only_leaves or self.is_leaf else 0
 
-    def right_child_add_prefix(self, text):
-        """print the right child with the correct prefix
-        split at line breaks, add spaces, +, --, but no |
-        and then join the lines back together"""
-        lines = text.split("\n")
-        new_text = "    +--" + lines[0]
-        for x in lines[1:]:
-            new_text += "\n       " + x
-        return new_text
+        # Add counts from children if they exist
+        count += self.left_child.count_nodes_below(
+            only_leaves) if self.left_child else 0
+        count += self.right_child.count_nodes_below(
+            only_leaves) if self.right_child else 0
+
+        return count
 
     def __str__(self):
-        """print root or node with feature and threshold
-        then print left and right children"""
-        if self.is_root:
-            node_text = (
-                f"root [feature={self.feature},"
-                f" threshold={self.threshold}]"
-            )
-        else:
-            node_text = (
-                f"-> node [feature={self.feature},"
-                f" threshold={self.threshold}]"
-            )
+        """
+        Method that returns the string representation of the current node
+        """
+        # String representation for the current node
+        node_str = (
+            f"root [feature={self.feature}, threshold={self.threshold}]\n"
+            if self.is_root else
+            f"-> node [feature={self.feature}, "
+            f"threshold={self.threshold}]\n"
+        )
 
-        left_child_str = self.left_child_add_prefix(str(self.left_child))
-        right_child_str = self.right_child_add_prefix(str(self.right_child))
-        return f"{node_text}\n{left_child_str}{right_child_str}"
+        # If the node is a leaf, simply return the string representation
+        if self.is_leaf:
+            return node_str
+
+        # Formatting for the left and right children
+        left_str = self.left_child_add_prefix(
+            self.left_child.__str__()) if self.left_child else ""
+        right_str = self.right_child_add_prefix(
+            self.right_child.__str__()) if self.right_child else ""
+
+        return node_str + left_str + right_str
+
+    def left_child_add_prefix(self, text):
+        """ Add prefix to the left child """
+        lines = text.split("\n")
+        # Adding prefix to the first line
+        new_text = "    +--" + lines[0] + "\n"
+        # Adding prefix to the rest of the lines
+        new_text += "\n".join(["    |  " + line for line in lines[1:-1]])
+        # Append an additional newline character if there are multiple lines
+        new_text += "\n" if len(lines) > 1 else ""
+        return new_text
+
+    def right_child_add_prefix(self, text):
+        """ Add prefix to the right child """
+        lines = text.split("\n")
+        # Adding prefix to the first line
+        new_text = "    +--" + lines[0] + "\n"
+        # Adding prefix to the rest of the lines
+        new_text += "\n".join(["     " + "  " + line for line in lines[1:-1]])
+        # Append an additional newline character if there are multiple lines
+        new_text += "\n" if len(lines) > 1 else ""
+        return new_text
 
     def get_leaves_below(self):
-        """Get all the leaves below this node."""
-        return (self.left_child.get_leaves_below()
-                + self.right_child.get_leaves_below())
+        """ Method that returns the leaves below the current node """
+        leaves = []
+        if self.is_leaf:
+            leaves.append(self)
+        else:
+            leaves += self.left_child.get_leaves_below()
+            leaves += self.right_child.get_leaves_below()
+        return leaves
 
     def update_bounds_below(self):
         """Update the bounds of the leaves below the current node."""
@@ -98,77 +160,103 @@ class Node:
                 child.update_bounds_below()
 
     def update_indicator(self):
-        """Update the indicator function of the leaves
-        below the current node."""
+        """Update the indicator function for the leaves below
+        the current node."""
 
         def is_large_enough(x):
-            """returns a 1Darray of size `n_individuals`
-            so that the `i`-th element of the later is `True`
-            if the `i`-th individual has all its
-            features > the lower bounds"""
+            """Check if the input is large enough."""
             lower_bounds = np.array([self.lower.get(i, -np.inf)
                                      for i in range(x.shape[1])])
-            return np.all(x > lower_bounds, axis=1)
+            return np.all(x >= lower_bounds, axis=1)
 
         def is_small_enough(x):
-            """returns a 1Dnumoy array of size `n_individuals`
-            so that the `i`-th element of the later is `True`
-            if the `i`-th individual has all its
-            features <= the lower bounds"""
+            """Check if the input is small enough."""
             upper_bounds = np.array([self.upper.get(i, np.inf)
                                      for i in range(x.shape[1])])
             return np.all(x <= upper_bounds, axis=1)
 
-        """returns a 1Dboolean array where ith element is True if
-        both is_large_enough and is_small_enough are True for the
-        ith individual"""
-        self.indicator = lambda x: np.all(np.array(
-            [is_large_enough(x), is_small_enough(x)]), axis=0)
+        self.indicator = lambda x: np.all(
+            np.array([is_large_enough(x), is_small_enough(x)]), axis=0)
 
     def pred(self, x):
-        """predict the value of a data point"""
+        """ Method that predicts the value of a sample """
         if x[self.feature] > self.threshold:
-            return self.right_child.pred(x)
-        else:
             return self.left_child.pred(x)
+        else:
+            return self.right_child.pred(x)
 
 
 class Leaf(Node):
-    """representing a leaf in a decision tree"""
+    """
+    Class that represents a leaf node in a decision tree
+    """
+
     def __init__(self, value, depth=None):
+        """
+        Class constructor for Leaf class
+        Args:
+            value (_type_): _description_.
+            depth (_type_, optional): _description_. Defaults to None.
+        """
         super().__init__()
         self.value = value
         self.is_leaf = True
         self.depth = depth
 
     def max_depth_below(self):
-        """calculate the maximum depth below the current node"""
+        """
+        Method that calculates the maximum depth of the current node
+        Returns:
+            int: maximum depth of the current node
+        """
         return self.depth
 
     def count_nodes_below(self, only_leaves=False):
-        """Calculate the number of nodes below this node."""
+        """
+        Method that counts the number of nodes below the current node
+        Args:
+            only_leaves (bool, optional): _description_. Defaults to False.
+        Returns:
+            int: number of nodes below the current node
+        """
         return 1
 
     def __str__(self):
+        """
+        Method that returns the string representation of the current node
+        """
         return (f"-> leaf [value={self.value}] ")
 
     def get_leaves_below(self):
-        """Get all the leaves below this node."""
+        """ Method that returns the leaves below the current node """
         return [self]
 
-    def update_bounds(self, bounds):
-        """update the bounds of the leaf"""
+    def update_bounds_below(self):
+        """ Method that updates the bounds of the decision tree """
         pass
 
     def pred(self, x):
-        """predict the value of a data point"""
+        """ Method that predicts the value of a sample """
         return self.value
 
 
 class Decision_Tree():
-    """representing a decision tree"""
+    """
+    Class that represents a decision tree
+    """
+
     def __init__(self, max_depth=10, min_pop=1, seed=0,
                  split_criterion="random", root=None):
+        """
+        Class constructor for Decision_Tree class
+        Args:
+            max_depth (int, optional): _description_. Defaults to 10.
+            min_pop (int, optional): _description_. Defaults to 1.
+            seed (int, optional): _description_. Defaults to 0.
+            split_criterion (str, optional): _description_.
+                Defaults to "random".
+            root (_type_, optional): _description_. Defaults to None.
+        """
         self.rng = np.random.default_rng(seed)
         if root:
             self.root = root
@@ -182,120 +270,160 @@ class Decision_Tree():
         self.predict = None
 
     def depth(self):
-        """calculate the depth of the decision tree"""
+        """
+        Method that calculates the depth of the decision tree
+        """
         return self.root.max_depth_below()
 
     def count_nodes(self, only_leaves=False):
-        """Calculate the number of nodes in the decision tree."""
+        """
+        Method that counts the number of nodes in the decision tree
+        Args:
+            only_leaves (bool, optional): _description_. Defaults to False.
+        Returns:
+            int: number of nodes in the decision tree
+        """
         return self.root.count_nodes_below(only_leaves=only_leaves)
 
     def __str__(self):
-        """print the root node"""
+        """
+        Method that returns the string representation of the decision tree
+        """
         return self.root.__str__()
 
     def get_leaves(self):
-        """Get all the leaves in the tree."""
+        """ Method that returns the leaves of the decision tree """
         return self.root.get_leaves_below()
 
     def update_bounds(self):
-        """update the bounds of the leaves in the tree"""
+        """ Method that updates the bounds of the decision tree """
         self.root.update_bounds_below()
 
+    def update_indicator(self):
+        """
+        Updates the indicator functions for all nodes in the tree starting
+        from the root.
+        """
+        self.root.update_indicator()
+
+    def pred(self, x):
+        """ Method that predicts the value of a sample """
+        return self.root.pred(x)
+
     def update_predict(self):
-        """update the predict method of the decision tree"""
+        """ Method that updates the predict function """
         self.update_bounds()
         leaves = self.get_leaves()
         for leaf in leaves:
             leaf.update_indicator()
         self.predict = lambda A: np.array([self.pred(x) for x in A])
 
-    def pred(self, x):
-        """predict the value of a data point"""
-        return self.root.pred(x)
-
-    def fit(self,explanatory, target,verbose=0):
-        """ Fit the decision tree"""
-        if self.split_criterion == "random" :
-                self.split_criterion = self.random_split_criterion
-        else :
-                self.split_criterion = self.Gini_split_criterion
+    def fit(self, explanatory, target, verbose=0):
+        """ Method that fits the decision tree to the training data """
+        if self.split_criterion == "random":
+            self.split_criterion = self.random_split_criterion
+        else:
+            self.split_criterion = self.Gini_split_criterion
         self.explanatory = explanatory
-        self.target      = target
-        self.root.sub_population = np.ones_like(self.target,dtype='bool')
+        self.target = target
+        self.root.sub_population = np.ones_like(self.target, dtype='bool')
 
+        # definde later
         self.fit_node(self.root)
 
+        # defined in the previous task
         self.update_predict()
 
-        if verbose==1 :
-                print(f"""  Training finished.
-- Depth                     : { self.depth()       }
-- Number of nodes           : { self.count_nodes() }
-- Number of leaves          : { self.count_nodes(only_leaves=True) }
-- Accuracy on training data : { self.accuracy(self.explanatory,self.target)    }""")
+        if verbose == 1:
+            # print("----------------------------------------------------")
+            print(f"  Training finished.")
+            print(f"    - Depth                     : {self.depth()}")
+            print(f"    - Number of nodes           : {self.count_nodes()}")
+            print(f"    - Number of leaves          : "
+                  f"{self.count_nodes(only_leaves=True)}")
+            print(f"    - Accuracy on training data : "
+                  f"{self.accuracy(self.explanatory, self.target)}")
+            # print("----------------------------------------------------")
 
-    def np_extrema(self,arr):
-        """ Return the minimum and maximum of an array"""
+    def np_extrema(self, arr):
+        """returns the minimum and maximum of an array"""
         return np.min(arr), np.max(arr)
 
     def random_split_criterion(self, node):
+        """returns a random feature and threshold"""
         diff = 0
-        attempts = 0
-        max_attempts = self.explanatory.shape[1] * 2  # Twice the number of features
-
-        while diff == 0 and attempts < max_attempts:
+        while diff == 0:
             feature = self.rng.integers(0, self.explanatory.shape[1])
-            feature_min, feature_max = self.np_extrema(self.explanatory[:, feature][node.sub_population])
-            diff = feature_max - feature_min
-            attempts += 1
-
-        if attempts == max_attempts:
-            raise ValueError("Unable to find a feature with non-zero range after {} attempts".format(max_attempts))
-
+            feature_min, feature_max = self.np_extrema(
+                self.explanatory[:, feature][node.sub_population])
+            diff = feature_max-feature_min
         x = self.rng.uniform()
-        threshold = (1 - x) * feature_min + x * feature_max
+        threshold = (1-x) * feature_min + x * feature_max
         return feature, threshold
 
     def fit_node(self, node):
-        """ Fit a node in the decision tree"""
-        node.feature, node.threshold = self.random_split_criterion(node)
+        """fitting a node in the decision tree
+        splitting between right and left children
+        is left = feature > threshold
+        is right = feature <= threshold"""
+        node.feature, node.threshold = self.split_criterion(node)
+        left_population = node.sub_population & (
+            self.explanatory[:, node.feature] > node.threshold)
+        right_population = node.sub_population & ~left_population
 
-        left_population = self.explanatory[node.sub_population, node.feature] <= node.threshold
-        right_population = self.explanatory[node.sub_population, node.feature] > node.threshold
+        # Ensure that left_population and right_population are the
+        # same length as self.target
+        if len(left_population) != len(self.target):
+            left_population = np.pad(left_population, (0, len(
+                self.target) - len(left_population)),
+                'constant', constant_values=(0))
+        if len(right_population) != len(self.target):
+            right_population = np.pad(right_population, (0, len(
+                self.target) - len(right_population)),
+                'constant', constant_values=(0))
 
-        # Is left node a leaf?
-        is_left_leaf = np.sum(left_population) < self.min_pop or node.depth >= self.max_depth or np.all(self.target[node.sub_population][left_population] == self.target[node.sub_population][left_population][0])
+        # Is left node a leaf ?
+        is_left_leaf = (node.depth == self.max_depth - 1 or
+                        np.sum(left_population) <= self.min_pop or
+                        np.unique(self.target[left_population]).size == 1)
 
         if is_left_leaf:
             node.left_child = self.get_leaf_child(node, left_population)
         else:
             node.left_child = self.get_node_child(node, left_population)
+            node.left_child.depth = node.depth + 1
             self.fit_node(node.left_child)
 
-        # Is right node a leaf?
-        is_right_leaf = np.sum(right_population) < self.min_pop or node.depth >= self.max_depth or np.all(self.target[node.sub_population][right_population] == self.target[node.sub_population][right_population][0])
+        # Is right node a leaf ?
+        is_right_leaf = (node.depth == self.max_depth - 1 or
+                         np.sum(right_population) <= self.min_pop or
+                         np.unique(self.target[right_population]).size == 1)
 
         if is_right_leaf:
             node.right_child = self.get_leaf_child(node, right_population)
         else:
             node.right_child = self.get_node_child(node, right_population)
+            node.right_child.depth = node.depth + 1
             self.fit_node(node.right_child)
 
     def get_leaf_child(self, node, sub_population):
-        """ Return a leaf node"""
-        value = np.argmax(np.bincount(self.target[sub_population]))
-        leaf_child= Leaf( value )
-        leaf_child.depth=node.depth + 1
-        leaf_child.sub_population = sub_population
+        """returns a leaf node"""
+        target_values = self.target[sub_population]
+        values, counts = np.unique(target_values, return_counts=True)
+        value = values[np.argmax(counts)]
+        leaf_child = Leaf(value)
+        leaf_child.depth = node.depth + 1
+        leaf_child.subpopulation = sub_population
         return leaf_child
 
     def get_node_child(self, node, sub_population):
-        """ Return a node child"""
-        n= Node()
-        n.depth = node.depth + 1
+        """creates a new node and returns it"""
+        n = Node()
+        n.depth = node.depth+1
         n.sub_population = sub_population
         return n
 
-    def accuracy(self, test_explanatory , test_target):
-        """ Return the accuracy of the decision tree on the test data"""
-        return np.sum(np.equal(self.predict(test_explanatory), test_target))/test_target.size
+    def accuracy(self, test_explanatory, test_target):
+        """returns the accuracy of the decision tree on the test data"""
+        preds = self.predict(test_explanatory) == test_target
+        return np.sum(preds) / len(test_target)
