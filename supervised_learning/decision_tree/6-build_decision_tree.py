@@ -112,6 +112,15 @@ class Node:
             if child is not None:
                 child.update_bounds_below()
 
+    def add_child(self, node, direction):
+        """Add a child node to the current node."""
+        if direction == 'left':
+            self.left_child = node
+        elif direction == 'right':
+            self.right_child = node
+        else:
+            raise ValueError("Direction must be either 'left' or 'right'.")
+
 
 class Leaf(Node):
     """representing a leaf in a decision tree"""
@@ -140,7 +149,10 @@ class Leaf(Node):
         """update the bounds of the leaf"""
         pass
 
-
+    def set_value(self, value):
+        """Set the value of the leaf."""
+        self.value = value
+        
 class Decision_Tree():
     """representing a decision tree"""
     def __init__(self, max_depth=10, min_pop=1, seed=0,
@@ -184,3 +196,7 @@ class Decision_Tree():
     def update_bounds(self):
         """update the bounds of the leaves in the tree"""
         self.root.update_bounds_below()
+
+    def set_root(self, node):
+        """Set the root of the decision tree."""
+        self.root = node
