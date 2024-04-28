@@ -43,22 +43,24 @@ class Node:
             count += self.left_child.count_nodes_below(only_leaves=only_leaves)
 
         if self.right_child:
-            count += self.right_child.count_nodes_below\
-                (only_leaves=only_leaves)
+            count += self.right_child.count_nodes_below (only_leaves=only_leaves)
 
         return count
+    
     def __str__(self):
         """ string representation of the node"""
-        node_str = (f"root [feature={self.feature}, threshold={self.threshold}]\n"
-                if self.is_root else f"-> node [feature={self.feature}, threshold={self.threshold}]\n")
-        
+        node_str = (f"root [feature={self.feature},
+                    threshold={self.threshold}]\n"
+                if self.is_root else f"-> node [feature={self.feature},
+                threshold={self.threshold}]\n")
+
         left_str = self.left_child_add_prefix(
             self.left_child.__str__()) if self.left_child else ""
         right_str = self.right_child_add_prefix(
             self.right_child.__str__()) if self.right_child else ""
-        
+
         return node_str + left_str + right_str
-    
+
     def left_child_add_prefix(self, text):
         """ Add prefix to the left child"""
         lines = text.split("\n")
@@ -66,7 +68,7 @@ class Node:
         new_text += "\n".join(["    |  " + line for line in lines[1:-1]])
         new_text += "\n" if len(lines) > 1 else ""
         return new_text
-        
+
     def right_child_add_prefix(self, text):
         """ Add prefix to the right child"""
         lines = text.split("\n")
@@ -74,7 +76,8 @@ class Node:
         new_text += "\n".join(["    " + "   " + line for line in lines[1:-1]])
         new_text += "\n" if len(lines) > 1 else ""
         return new_text
-        
+
+
 class Leaf(Node):
     """ Leaf node of the decision tree"""
     def __init__(self, value, depth=None):
@@ -91,7 +94,7 @@ class Leaf(Node):
     def count_nodes_below(self, only_leaves=False):
         """ Count the number of nodes below this node"""
         return 1
-    
+
     def __str__(self):
         """ Print the leaf node"""
         return (f"-> leaf [value={self.value}]")
