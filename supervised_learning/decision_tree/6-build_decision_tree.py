@@ -109,7 +109,6 @@ class Node:
                                      for i in range(x.shape[1])])
             return np.all(x <= upper_bounds, axis=1)
 
-
         self.indicator = lambda x: np.all(np.array(
             [is_large_enough(x), is_small_enough(x)]), axis=0)
 
@@ -200,4 +199,3 @@ class Decision_Tree():
     def pred(self, x):
         """predict the value of a data point"""
         return self.root.pred(x)
-    
