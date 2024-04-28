@@ -251,13 +251,13 @@ class Decision_Tree():
 
     def fit_node(self, node):
         """ Fit a node in the decision tree"""
-        node.feature, node.threshold = self.split_criterion(node)
+        node.feature, node.threshold = self.random_split_criterion(node)
 
-        left_population = self.explanatory[:, node.feature] > node.threshold
-        right_population = np.logical_not(left_population)
+        left_population = self.explanatory[node.sub_population, node.feature] <= node.threshold
+        right_population = self.explanatory[node.sub_population, node.feature] > node.threshold
 
         # Is left node a leaf?
-        is_left_leaf = np.sum(left_population) < self.min_pop or node.depth >= self.max_depth or np.all(self.target[left_population] == self.target[left_population][0])
+        is_left_leaf = np.sum(left_population) < self.min_pop or node.depth >= self.max_depth or np.all(self.target[node.sub_population][left_population] == self.target[node.sub_population][left_population][0])
 
         if is_left_leaf:
             node.left_child = self.get_leaf_child(node, left_population)
@@ -266,7 +266,7 @@ class Decision_Tree():
             self.fit_node(node.left_child)
 
         # Is right node a leaf?
-        is_right_leaf = np.sum(right_population) < self.min_pop or node.depth >= self.max_depth or np.all(self.target[right_population] == self.target[right_population][0])
+        is_right_leaf = np.sum(right_population) < self.min_pop or node.depth >= self.max_depth or np.all(self.target[node.sub_population][right_population] == self.target[node.sub_population][right_population][0])
 
         if is_right_leaf:
             node.right_child = self.get_leaf_child(node, right_population)
