@@ -200,3 +200,7 @@ class Decision_Tree():
     def set_root(self, node):
         """Set the root of the decision tree."""
         self.root = node
+
+    def pred(self, x):
+        """Predict the value for a given input."""
+        return self.root.pred(x)
