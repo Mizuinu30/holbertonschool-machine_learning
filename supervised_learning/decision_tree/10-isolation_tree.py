@@ -86,7 +86,7 @@ class Isolation_Random_Tree():
         right_population = node.sub_population & ~above_treshold
 
         is_left_leaf = np.any([
-            node.depth >= self.max_depth -1,
+            node.depth >= self.max_depth - 1,
             np.sum(left_population) <= self.min_pop
         ])
 
@@ -97,7 +97,7 @@ class Isolation_Random_Tree():
             self.fit_node(node.left_child)
 
         is_right_leaf = np.any([
-            node.depth >= self.max_depth -1,
+            node.depth >= self.max_depth - 1,
             np.sum(right_population) <= self.min_pop
         ])
 
