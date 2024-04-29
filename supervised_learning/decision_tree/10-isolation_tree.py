@@ -79,14 +79,14 @@ class Isolation_Random_Tree():
 
     def fit_node(self, node):
         """ Recursive fit """
-        node.feature, node.threshold = self.randoms_split_criterion(node)
+        node.feature, node.threshold = self.random_split_criterion(node)
 
-        above_treshold = self.explanatory[:, node.feature] > node.threshold
-        left_population = node.sub_population & above_treshold
-        right_population = node.sub_population & ~above_treshold
+        above_threshold = self.explanatory[:, node.feature] > node.threshold
+        left_population = node.sub_population & above_threshold
+        right_population = node.sub_population & ~above_threshold
 
         is_left_leaf = np.any([
-            node.depth >= self.max_depth -1,
+            node.depth >= self.max_depth - 1,
             np.sum(left_population) <= self.min_pop
         ])
 
@@ -97,7 +97,7 @@ class Isolation_Random_Tree():
             self.fit_node(node.left_child)
 
         is_right_leaf = np.any([
-            node.depth >= self.max_depth -1,
+            node.depth >= self.max_depth - 1,
             np.sum(right_population) <= self.min_pop
         ])
 
@@ -109,7 +109,7 @@ class Isolation_Random_Tree():
 
     def fit(self, explanatory, verbose=0):
         """ Fit the isolation tree """
-        self.split_criterion = self.randoms_split_criterion
+        self.split_criterion = self.random_split_criterion
         self.explanatory = explanatory
         self.root.sub_population = np.ones(explanatory.shape[0],
                                            dtype=bool)
