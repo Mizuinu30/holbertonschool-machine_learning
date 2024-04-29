@@ -35,18 +35,17 @@ class Node:
     def count_nodes_below(self, only_leaves=False):
         """ Count the number of nodes below this node"""
         if only_leaves:
+            if self.is_leaf:
+                return 1
             count = 0
         else:
-            count = 1
+            count = 1  # Count this node
 
         if self.left_child:
-            count += self.left_child.count_nodes_below(only_leaves=only_leaves)
-
+            count += self.left_child.count_nodes_below(only_leaves)
         if self.right_child:
-            count += self.right_child.count_nodes_below(only_leaves=only_leaves)
-
+            count += self.right_child.count_nodes_below(only_leaves)
         return count
-
 
 class Leaf(Node):
     """ Leaf node of the decision tree"""
