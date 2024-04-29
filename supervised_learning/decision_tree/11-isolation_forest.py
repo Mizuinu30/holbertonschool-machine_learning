@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
-""" Module that builds a decision tree """
+""" Module that defines an Isolation Random Forest. """
 
 
-import numpy as np
+iimport numpy as np
 Isolation_Random_Tree = __import__('10-isolation_tree').Isolation_Random_Tree
 
+
 class Isolation_Random_Forest():
-    """ Random Isolation Forest classifier using Isolation Trees as base learners"""
+    """ This class defines an Isolation Random Forest. """
+
     def __init__(self, n_trees=100, max_depth=10, min_pop=1, seed=0):
-        """ Initializes an Isolation Random Forest classifier."""
+        """ Initializes the Isolation Random Forest. """
         self.numpy_predicts = []
         self.target = None
         self.numpy_preds = None
@@ -17,19 +19,20 @@ class Isolation_Random_Forest():
         self.seed = seed
 
     def predict(self, explanatory):
-        """Predicts the target variable for input data"""
+        """ Makes predictions for a given set of examples. """
         predictions = np.array([f(explanatory) for f in self.numpy_preds])
         return predictions.mean(axis=0)
 
     def fit(self, explanatory, n_trees=100, verbose=0):
-        """ Fits model to data"""
+        """ Fits the model to the training data. """
         self.explanatory = explanatory
         self.numpy_preds = []
         depths = []
         nodes = []
         leaves = []
         for i in range(n_trees):
-            T = Isolation_Random_Tree(max_depth=self.max_depth, seed=self.seed + i)
+            T = Isolation_Random_Tree(max_depth=self.max_depth,
+                                      seed=self.seed + i)
             T.fit(explanatory)
             self.numpy_preds.append(T.predict)
             depths.append(T.depth())
@@ -37,12 +40,12 @@ class Isolation_Random_Forest():
             leaves.append(T.count_nodes(only_leaves=True))
         if verbose == 1:
             print(f"""  Training finished.
-    - Mean depth                     : { np.array(depths).mean()      }
-    - Mean number of nodes           : { np.array(nodes).mean()       }
-    - Mean number of leaves          : { np.array(leaves).mean()      }""")
+    - Mean depth                     : {np.array(depths).mean()}
+    - Mean number of nodes           : {np.array(nodes).mean()}
+    - Mean number of leaves          : {np.array(leaves).mean()}""")
 
     def suspects(self, explanatory, n_suspects):
-        """ Get the most suspicious data points."""
+        """ Returns the top n_suspects with the smallest depths. """
         depths = self.predict(explanatory)
         sorted_indices = np.argsort(depths)
         suspect_data = explanatory[sorted_indices[:n_suspects]]
