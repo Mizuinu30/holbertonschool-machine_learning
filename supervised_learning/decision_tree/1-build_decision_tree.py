@@ -47,6 +47,7 @@ class Node:
             count += self.right_child.count_nodes_below(only_leaves)
         return count
 
+
 class Leaf(Node):
     """ Leaf node of the decision tree"""
     def __init__(self, value, depth=None):
