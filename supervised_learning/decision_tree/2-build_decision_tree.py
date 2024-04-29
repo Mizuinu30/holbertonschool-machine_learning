@@ -47,7 +47,7 @@ class Node:
             count += self.right_child.count_nodes_below(only_leaves)
         return count
 
-    
+
     def __str__(self):
         """ string representation of the node"""
         node_str = (f"root [feature={self.feature},\
