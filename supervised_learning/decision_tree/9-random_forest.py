@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""This module provides a Random Forest classifier that uses Decision Trees
+"""This module provides a Random Forest classifier that uses Decision Trees
 as its base learners"""
 import numpy as np
 Decision_Tree = __import__('8-build_decision_tree').Decision_Tree
