@@ -47,19 +47,20 @@ class Node:
             count += self.right_child.count_nodes_below(only_leaves)
         return count
 
+    
     def __str__(self):
         """ string representation of the node"""
-        p = "root" if self.is_root else "-> node"
-        result = f"{p} [feature={self.feature},\
- threshold={self.threshold}]\n"
-        if self.left_child:
-            result +=\
-                self.left_child_add_prefix(self.left_child.__str__().strip())
-        if self.right_child:
-            result +=\
-                self.right_child_add_prefix(self.right_child.__str__().strip())
-        return result
+        node_str = (f"root [feature={self.feature},\
+threshold={self.threshold}]\n"
+        if self.is_root else f"-> node [feature={self.feature},\
+threshold={self.threshold}]\n")
 
+        left_str = self.left_child_add_prefix(
+            self.left_child.__str__()) if self.left_child else ""
+        right_str = self.right_child_add_prefix(
+            self.right_child.__str__()) if self.right_child else ""
+
+        return node_str + left_str + right_str
 
     def left_child_add_prefix(self, text):
         """ Add prefix to the left child"""
