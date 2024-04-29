@@ -2,7 +2,7 @@
 """ Module that defines an Isolation Random Forest. """
 
 
-iimport numpy as np
+import numpy as np
 Isolation_Random_Tree = __import__('10-isolation_tree').Isolation_Random_Tree
 
 
