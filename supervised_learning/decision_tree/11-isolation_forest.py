@@ -31,13 +31,12 @@ class Isolation_Random_Forest():
         nodes = []
         leaves = []
         for i in range(n_trees):
-            T = Isolation_Random_Tree(max_depth=self.max_depth,
-                                      seed=self.seed + i)
-            T.fit(explanatory)
-            self.numpy_preds.append(T.predict)
-            depths.append(T.depth())
-            nodes.append(T.count_nodes())
-            leaves.append(T.count_nodes(only_leaves=True))
+            tree = Isolation_Random_Tree(max_depth=self.max_depth, seed=self.seed+i)
+            tree.fit(explanatory)
+            self.numpy_preds.append(tree.predict)
+            depths.append(tree.depth())
+            nodes.append(tree.count_nodes())
+            leaves.append(tree.count_nodes(only_leaves=True))
         if verbose == 1:
             print(f"""  Training finished.
     - Mean depth                     : {np.array(depths).mean()}
@@ -47,11 +46,8 @@ class Isolation_Random_Forest():
   
     def suspects(self, explanatory, n_suspects):
         """Returns the n_suspects rows in explanatory that have the smallest mean depth."""
-        # Calculate the mean depth for each data point using predict method
         depths = self.predict(explanatory)
-        # Get the indices that would sort the depths array in ascending order
         sorted_indices = np.argsort(depths)
-        # Select the top n suspects with the smallest depths
         suspect_data = explanatory[sorted_indices[:n_suspects]]
         suspect_depths = depths[sorted_indices[:n_suspects]]
         return suspect_data, suspect_depths
