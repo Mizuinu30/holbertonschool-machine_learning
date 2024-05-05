@@ -49,11 +49,8 @@ class Isolation_Random_Forest():
 
     def suspects(self, explanatory, n_suspects):
         """ Returns the top n_suspects with the smallest depths. """
-        # Calculate the mean depth for each data point using predict method
         depths = self.predict(explanatory)
-        # Get the indices that would sort the depths array in ascending order
         sorted_indices = np.argsort(depths)
-        # Select the top n suspects with the smallest depths
         suspect_data = explanatory[sorted_indices[:n_suspects]]
         suspect_depths = depths[sorted_indices[:n_suspects]]
         return suspect_data, suspect_depths

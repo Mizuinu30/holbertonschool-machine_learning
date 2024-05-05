@@ -1,23 +1,10 @@
 #!/usr/bin/env python3
-"""
-This module defines the classes for building a basic decision tree,
-including Node, Leaf, and Decision_Tree.
-"""
+""" Module that builds a decision tree"""
 import numpy as np
 
 
 class Node:
-    """
-    Represents a node in a decision tree.
-
-    Attributes:
-        feature (int): Index of the feature used for splitting.
-        threshold (float): Threshold value for the split.
-        left_child (Node): Left child node.
-        right_child (Node): Right child node.
-        is_root (bool): Indicates if the node is the root.
-        depth (int): Depth of the node in the tree.
-    """
+    """Represents a node in a decision tree"""
     def __init__(self, feature=None, threshold=None, left_child=None,
                  right_child=None, is_root=False, depth=0):
         self.feature = feature
@@ -30,12 +17,7 @@ class Node:
         self.depth = depth
 
     def __str__(self):
-        """
-        Provides a string representation of the node and its children.
-
-        Returns:
-            str: A string representation of the subtree rooted at this node.
-        """
+        """Provides a string representation of the node and its children"""
         p = "root" if self.is_root else "-> node"
         result = f"{p} [feature={self.feature},\
  threshold={self.threshold}]\n"
@@ -48,15 +30,7 @@ class Node:
         return result
 
     def left_child_add_prefix(self, text):
-        """
-        Adds a prefix for the left child's subtree representation.
-
-        Args:
-            text (str): The subtree string.
-
-        Returns:
-            str: The modified subtree string with added prefixes.
-        """
+        """Adds a prefix for the left child's subtree representation"""
         lines = text.split("\n")
         new_text = "    +--"+lines[0] + "\n"
         for x in lines[1:]:
@@ -65,15 +39,7 @@ class Node:
         return (new_text)
 
     def right_child_add_prefix(self, text):
-        """
-        Adds a prefix for the right child's subtree representation.
-
-        Args:
-            text (str): The subtree string.
-
-        Returns:
-            str: The modified subtree string with added prefixes.
-        """
+        """Adds a prefix for the right child's subtree representation"""
         lines = text.split("\n")
         new_text = "    +--" + lines[0] + "\n"
         for x in lines[1:]:
@@ -82,12 +48,7 @@ class Node:
         return new_text
 
     def max_depth_below(self):
-        """
-        Calculates the maximum depth below this node.
-
-        Returns:
-            int: Maximum depth below this node.
-        """
+        """Calculates the maximum depth below this node"""
         max_depth = self.depth
         if self.left_child:
             max_depth = max(max_depth, self.left_child.max_depth_below())
@@ -96,15 +57,7 @@ class Node:
         return max_depth
 
     def count_nodes_below(self, only_leaves=False):
-        """
-        Counts the nodes below this node, optionally counting only the leaves.
-
-        Args:
-            only_leaves (bool): Whether to count only leaves.
-
-        Returns:
-            int: The count of nodes or leaves below this node.
-        """
+        """Counts the nodes below this node, optionally counting only the leaves"""
         if only_leaves:
             if self.is_leaf:
                 return 1
@@ -119,12 +72,7 @@ class Node:
         return count
 
     def get_leaves_below(self):
-        """
-        Retrieves all leaf nodes below this node.
-
-        Returns:
-            list: A list of all leaf nodes below this node.
-        """
+        """Retrieves all leaf nodes below this node."""
         leaves = []
         if self.is_leaf:
             leaves.append(self)
@@ -136,11 +84,9 @@ class Node:
         return leaves
 
     def update_bounds_below(self):
-        """
-        Recursively updates bounds for this node and its children.
+        """Recursively updates bounds for this node and its children.
         Initializes at root with infinite bounds and adjusts for children
-        based on data.
-        """
+        based on data splits"""
         if self.is_root:
             self.upper = {0: np.inf}
             self.lower = {0: -1*np.inf}
@@ -159,11 +105,7 @@ class Node:
             child.update_bounds_below()
 
     def update_indicator(self):
-        """
-        Updates the indicator function for the node based on the bounds.
-        This function defines whether an individual's features meet the
-        node's criteria.
-        """
+        """Updates the indicator function for the node based on the bounds"""
         def is_large_enough(x):
             return np.array([np.greater_equal(x[:, key], self.lower[key])
                             for key in self.lower.keys()]).all(axis=0)
@@ -176,8 +118,7 @@ class Node:
                                                   is_small_enough(x))
 
     def update_predict(self):
-        """
-        Updates the prediction function of the decision tree.
+        """Updates the prediction function of the decision tree.
         This function prepares the tree to make predictions by updating
         bounds, retrieving all leaves, and setting their indicators.
         It defines a lambda function as the predict method, which uses
@@ -193,16 +134,12 @@ class Node:
                                            if leaf.indicator(x)])
 
     def pred(self, x):
-        """
-        Recursively predicts the value by navigating down the tree based
+        """Recursively predicts the value by navigating down the tree based
         on the input features.
-
         Args:
             x (array): The input features for a single sample.
-
         Returns:
-            any: The predicted value from the child nodes.
-        """
+          any: The predicted value from the child nodes"""
         if x[self.feature] > self.threshold:
             return self.left_child.pred(x)
         else:
@@ -210,13 +147,7 @@ class Node:
 
 
 class Leaf(Node):
-    """
-    Represents a leaf in a decision tree.
-
-    Attributes:
-        value (any): The value predicted by this leaf.
-        depth (int): Depth of the leaf in the tree.
-    """
+    """ Represents a leaf in a decision tree"""
     def __init__(self, value, depth=None):
         super().__init__()
         self.value = value
@@ -224,21 +155,11 @@ class Leaf(Node):
         self.depth = depth
 
     def __str__(self):
-        """
-        Provides a string representation of the leaf.
-
-        Returns:
-            str: A string representation of this leaf.
-        """
+        """ Provides a string representation of the leaf """
         return (f"-> leaf [value={self.value}] ")
 
     def max_depth_below(self):
-        """
-        Returns the depth of the leaf, as leaves are the end of a branch.
-
-        Returns:
-            int: The depth of this leaf.
-        """
+        """ Returns the depth of the leaf, as leaves are the end of a branch"""
         return self.depth
 
     def count_nodes_below(self, only_leaves=False):

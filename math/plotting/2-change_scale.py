@@ -25,3 +25,5 @@ def change_scale():
     plt.title('Exponential Decay of C-14')
 
     plt.show()
+
+change_scale()

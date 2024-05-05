@@ -40,3 +40,4 @@ def bars():
 
     # Display the plot
     plt.show()
+bars()
