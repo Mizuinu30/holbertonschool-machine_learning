@@ -91,3 +91,15 @@ class NeuralNetwork:
         m = Y.shape[1]
         cost = -1 / m * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
         return cost
+
+    def evaluate(self, X, Y):
+        """Evaluates the neural network’s predictions
+        X = numpy.ndarray with shape (nx, m) that contains the input data
+        Y = numpy.ndarray with shape (1, m) that contains the correct labels
+        nx = the number of input features to the neuron
+        m = the number of examples
+        It returns the neuron’s prediction and the cost of the network"""
+        self.forward_prop(X)
+        prediction = np.where(self.__A2 >= 0.5, 1, 0)
+        cost = self.cost(Y, self.__A2)
+        return prediction, cost
