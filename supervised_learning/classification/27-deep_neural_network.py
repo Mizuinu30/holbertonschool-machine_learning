@@ -46,30 +46,30 @@ class DeepNeuralNetwork:
     def weights(self):
         """ Getter function for weights"""
         return self.__weights
-def forward_prop(self, X):
-        """
-            method calculate forward propagation of neural network
-        """
-        self.__cache['A0'] = X
-        L1 = self.__L
+    def forward_prop(self, X):
+            """
+                method calculate forward propagation of neural network
+            """
+            self.__cache['A0'] = X
+            L1 = self.__L
 
-        for lopper in range(1, L1):
-            Z = (np.matmul(self.__weights["W" + str(lopper)],
-                           self.__cache['A' + str(lopper - 1)]) +
-                 self.__weights['b' + str(lopper)])
-            if self.__activation == 'sig':
-                A = 1 / (1 + np.exp(-Z))
-            else:
-                A = np.tanh(Z)
-            self.__cache['A' + str(lopper)] = A
+            for lopper in range(1, L1):
+                Z = (np.matmul(self.__weights["W" + str(lopper)],
+                            self.__cache['A' + str(lopper - 1)]) +
+                    self.__weights['b' + str(lopper)])
+                if self.__activation == 'sig':
+                    A = 1 / (1 + np.exp(-Z))
+                else:
+                    A = np.tanh(Z)
+                self.__cache['A' + str(lopper)] = A
 
-        Z = (np.matmul(self.__weights["W" + str(L1)],
-                       self.__cache['A' + str(L1 - 1)]) +
-             self.__weights['b' + str(L1)])
-        A = np.exp(Z) / np.sum(np.exp(Z), axis=0)
-        self.__cache['A' + str(L1)] = A
+            Z = (np.matmul(self.__weights["W" + str(L1)],
+                        self.__cache['A' + str(L1 - 1)]) +
+                self.__weights['b' + str(L1)])
+            A = np.exp(Z) / np.sum(np.exp(Z), axis=0)
+            self.__cache['A' + str(L1)] = A
 
-        return A, self.__cache
+            return A, self.__cache
 
     def cost(self, Y, A):
         """
