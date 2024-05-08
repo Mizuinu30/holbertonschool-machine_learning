@@ -46,45 +46,49 @@ class DeepNeuralNetwork:
     def weights(self):
         """ Getter function for weights"""
         return self.__weights
-
-    def forward_prop(self, X):
+def forward_prop(self, X):
         """
-        Calculates the forward propagation of the neural network
+            method calculate forward propagation of neural network
         """
-        self.__cache["A0"] = X
-        for i in range(self.__L):
-            key_W = "W" + str(i + 1)
-            key_b = "b" + str(i + 1)
-            key_A_prev = "A" + str(i)
-            key_A = "A" + str(i + 1)
+        self.__cache['A0'] = X
+        L1 = self.__L
 
-            Z = np.dot(self.__weights[key_W], self.__cache[key_A_prev]) + self.__weights[key_b]
-            if i == self.__L - 1:
-                # softmax activation for the last layer
-                exp_Z = np.exp(Z)
-                self.__cache[key_A] = exp_Z / np.sum(exp_Z, axis=0, keepdims=True)
+        for lopper in range(1, L1):
+            Z = (np.matmul(self.__weights["W" + str(lopper)],
+                           self.__cache['A' + str(lopper - 1)]) +
+                 self.__weights['b' + str(lopper)])
+            if self.__activation == 'sig':
+                A = 1 / (1 + np.exp(-Z))
             else:
-                # sigmoid activation for the other layers
-                self.__cache[key_A] = 1 / (1 + np.exp(-Z))
+                A = np.tanh(Z)
+            self.__cache['A' + str(lopper)] = A
 
-        return self.__cache[key_A], self.__cache
+        Z = (np.matmul(self.__weights["W" + str(L1)],
+                       self.__cache['A' + str(L1 - 1)]) +
+             self.__weights['b' + str(L1)])
+        A = np.exp(Z) / np.sum(np.exp(Z), axis=0)
+        self.__cache['A' + str(L1)] = A
+
+        return A, self.__cache
 
     def cost(self, Y, A):
         """
-        Calculates the cost of the model using logistic regression
+            Calculate cross-entropy cost for multiclass
         """
         m = Y.shape[1]
-        cost = -1 / m * np.sum(Y * np.log(A))
-        return cost
+        log_loss = -(1 / m) * np.sum(Y * np.log(A))
+
+        return log_loss
 
     def evaluate(self, X, Y):
         """
-        Evaluates the neural network’s predictions
+            Method to evaluate the network's prediction
         """
         A, _ = self.forward_prop(X)
         cost = self.cost(Y, A)
-        prediction = np.argmax(A, axis=0)
-        return prediction, cost
+
+        return np.where(A == np.max(A, axis=0), 1, 0), cost
+
 
     def gradient_descent(self, Y, cache, alpha=0.05):
         """  Calculates one pass of gradient descent on the neural network"""
