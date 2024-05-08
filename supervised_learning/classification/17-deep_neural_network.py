@@ -34,9 +34,11 @@ class DeepNeuralNetwork:
             key_b = "b" + str(i + 1)
 
             if i == 0:
-                self.__weights[key_W] = np.random.randn(layers[i], nx) * np.sqrt(2 / nx)
+                self.__weights[key_W] = np.random.randn(
+                    layers[i], nx) * np.sqrt(2 / nx)
             else:
-                self.__weights[key_W] = np.random.randn(layers[i], layers[i - 1]) * np.sqrt(2 / layers[i - 1])
+                self.__weights[key_W] = np.random.randn(
+                    layers[i], layers[i - 1]) * np.sqrt(2 / layers[i - 1])
 
             self.__weights[key_b] = np.zeros((layers[i], 1))
 
