@@ -3,9 +3,9 @@
     Class DeepNeuralNetwork : deep NN performing binary classification
 """
 
-import pickle
 import numpy as np
 import matplotlib.pyplot as plt
+import pickle
 from typing import Dict, List, Tuple, Union
 
 
@@ -110,7 +110,10 @@ class DeepNeuralNetwork:
         """
         A, _ = self.forward_prop(X)
         cost = self.cost(Y, A)
-        return np.where(A == np.max(A, axis=0), 1, 0), cost
+        predictions = np.where(A == np.max(A, axis=0), 1, 0)
+        accuracy = np.sum(predictions == Y) / Y.size
+        print(f'Accuracy: {accuracy:.2%}')
+        return predictions, cost
 
     def gradient_descent(self, Y: np.ndarray, cache: Dict[str, np.ndarray], alpha: float = 0.05) -> None:
         """
@@ -173,7 +176,7 @@ class DeepNeuralNetwork:
             if i % step == 0 or i == iterations:
                 current_cost = self.cost(Y, A)
                 if verbose:
-                    print(f"Cost after {i} iterations: {current_cost}")
+                    print(f"Cost after {i} iterations: {current_cost:.6f}")
                 costs.append(current_cost)
                 count.append(i)
 
