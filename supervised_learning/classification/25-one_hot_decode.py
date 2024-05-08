@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" Modile that converts a one-hot matrix into a numeric label vector """
+""" Module that converts a one-hot matrix into a numeric label vector """
 import numpy as np
 
 
