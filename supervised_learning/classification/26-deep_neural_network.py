@@ -2,9 +2,10 @@
 """A Module defines a deep neural network performing binary classification"""
 
 
+import pickle
 import numpy as np
 from matplotlib import pyplot as plt
-import pickle
+
 
 class DeepNeuralNetwork:
     """class DeepNeuralNetwork"""
@@ -86,8 +87,10 @@ class DeepNeuralNetwork:
             dw = np.dot(dz, A_prev.T) / m
             db = np.sum(dz, axis=1, keepdims=True) / m
             da = np.dot(weights_copy['W' + str(i)].T, dz)
-            self.__weights['W' + str(i)] = weights_copy['W' + str(i)] - alpha * dw
-            self.__weights['b' + str(i)] = weights_copy['b' + str(i)] - alpha * db
+            self.__weights['W' + str(i)] = weights_copy[
+                'W' + str(i)] - alpha * dw
+            self.__weights['b' + str(i)] = weights_copy[
+                'b' + str(i)] - alpha * db
 
     def train(self, X, Y, iterations=5000, alpha=0.05,
               verbose=True, graph=True, step=100):
