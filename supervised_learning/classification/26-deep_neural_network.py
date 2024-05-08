@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """A Module defines a deep neural network performing binary classification"""
+
+
 import numpy as np
 from matplotlib import pyplot as plt
 import pickle
@@ -31,17 +33,21 @@ class DeepNeuralNetwork:
 
     @property
     def L(self):
+        """ Getter function for L"""
         return self.__L
 
     @property
     def cache(self):
+        """ Getter function for cache"""
         return self.__cache
 
     @property
     def weights(self):
+        """ Getter function for weights"""
         return self.__weights
 
     def forward_prop(self, X):
+        """ Calculates the forward propagation of the neural network"""
         self.cache['A0'] = X
         for i in range(self.__L):
             W = 'W' + str(i + 1)
@@ -52,11 +58,13 @@ class DeepNeuralNetwork:
         return self.cache['A' + str(self.__L)], self.cache
 
     def cost(self, Y, A):
+        """ Calculates the cost of the model using logistic regression"""
         m = Y.shape[1]
         cost = -1 / m * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
         return cost
 
     def evaluate(self, X, Y):
+        """ Evaluates the neural network's predictions"""
         self.forward_prop(X)
         A = self.cache['A' + str(self.__L)]
         Y_prediction = np.where(A >= 0.5, 1, 0)
@@ -64,6 +72,7 @@ class DeepNeuralNetwork:
         return Y_prediction, cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
+        """  Calculates one pass of gradient descent on the neural network"""
         m = Y.shape[1]
         weights_copy = self.__weights.copy()
         for i in range(self.__L, 0, -1):
@@ -80,7 +89,9 @@ class DeepNeuralNetwork:
             self.__weights['W' + str(i)] = weights_copy['W' + str(i)] - alpha * dw
             self.__weights['b' + str(i)] = weights_copy['b' + str(i)] - alpha * db
 
-    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True, step=100):
+    def train(self, X, Y, iterations=5000, alpha=0.05,
+              verbose=True, graph=True, step=100):
+        """ Trains the deep neural network"""
         if type(iterations) is not int:
             raise TypeError("iterations must be an integer")
         if iterations < 1:
@@ -116,6 +127,7 @@ class DeepNeuralNetwork:
         return self.evaluate(X, Y)
 
     def save(self, filename):
+        """ Saves the instance object to a file in pickle format"""
         if not filename.endswith('.pkl'):
             filename += '.pkl'
         with open(filename, 'wb') as file:
@@ -123,6 +135,7 @@ class DeepNeuralNetwork:
 
     @staticmethod
     def load(filename):
+        """ Loads a pickled DeepNeuralNetwork object"""
         if not filename.endswith('.pkl'):
             return None
         try:
