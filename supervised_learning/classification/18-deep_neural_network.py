@@ -71,7 +71,8 @@ class DeepNeuralNetwork:
             key_newA = "A" + str(i + 1)
 
             Z = np.matmul(
-                self.__weights[key_W], self.__cache[key_A]) + self.__weights[key_b]
+                self.__weights[key_W], self.__cache[key_A]) + self.__weights[
+                    key_b]
             self.__cache[key_newA] = 1 / (1 + np.exp(-Z))
 
         return self.__cache[key_newA], self.__cache
