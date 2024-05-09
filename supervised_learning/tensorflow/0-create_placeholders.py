@@ -1,4 +1,4 @@
-#!usr/bin/env python3
+#!/usr/bin/env python3
 """ function def create_placeholders(nx, classes): 
 that returns two placeholders, x and y, for the neural network """
 
