@@ -4,7 +4,6 @@
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 import pickle
 from typing import Dict, List, Tuple, Union
 
@@ -98,7 +97,7 @@ class DeepNeuralNetwork:
         log_loss = -(1 / m) * np.sum(Y * np.log(A))
         return log_loss
 
-    def evaluate(self, X: np.ndarray, Y: np.ndarray) -> Tuple[np.ndarray, float]:
+    def evaluate(self, X: np.ndarray, Y: np.ndarray, print_summary: bool = True) -> Tuple[np.ndarray, float]:
         """
         Method to evaluate the network's prediction
         """
@@ -106,7 +105,11 @@ class DeepNeuralNetwork:
         cost = self.cost(Y, A)
         predictions = np.where(A == np.max(A, axis=0), 1, 0)
         accuracy = np.sum(predictions == Y) / Y.size
-        print(f'Accuracy: {accuracy:.2%}')
+
+        if print_summary:
+            print(f'Accuracy: {accuracy:.2%}')
+            print(f'Cost: {cost:.6f}')
+
         return predictions, cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
@@ -167,9 +170,10 @@ class DeepNeuralNetwork:
                 count.append(i)
 
         if graph:
+            import matplotlib.pyplot as plt
             plt.plot(count, costs, 'b-')
-            plt.xlabel('iteration')
-            plt.ylabel('cost')
+            plt.xlabel('Iteration')
+            plt.ylabel('Cost')
             plt.title('Training Cost')
             plt.show()
 
