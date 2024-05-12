@@ -11,6 +11,6 @@ def create_train_op(loss, alpha):
     alpha is the learning rate
     Returns: an operation that trains the network using
     gradient descent"""
-    optimizer = tf.train.GradientDescentOptimizer(alpha)
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=alpha)
     train_op = optimizer.minize(loss)
     return train_op
