@@ -7,12 +7,15 @@ def create_mini_batches(X, Y, batch_size):
     Creates mini-batches from input data and labels.
 
     Args:
-        X (numpy.ndarray): Input data of shape (m, nx), where m is the number of data points and nx is the number of features.
-        Y (numpy.ndarray): Labels of shape (m, ny), where m is the number of data points and ny is the number of classes.
+        X (numpy.ndarray): Input data of shape (m, nx),
+        where m is the number of data points and nx is the number of features.
+        Y (numpy.ndarray): Labels of shape (m, ny),
+        where m is the number of data points and ny is the number of classes.
         batch_size (int): Number of data points in a batch.
 
     Returns:
-        list: List of mini-batches, each mini-batch is a tuple (X_batch, Y_batch).
+        list: List of mini-batches, each mini-batch is
+        a tuple (X_batch, Y_batch).
     """
     shuffle_data = __import__('2-shuffle_data').shuffle_data
     X, Y = shuffle_data(X, Y)
