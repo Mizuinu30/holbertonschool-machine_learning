@@ -3,11 +3,12 @@
 
 
 import tensorflow as tf
+import tensorflow.keras as keras
 
 
-def create_RMSProp_op(loss, alpha, beta2, epsilon):
+def create_RMSProp_op(alpha, beta2, epsilon):
     """
-    Creates the RMSProp optimizer in TensorFlow 2.x.
+    Creates the RMSProp optimizer in TensorFlow 2.x and uses it to minimize the loss.
 
     Parameters:
     loss -- the loss function
@@ -16,8 +17,9 @@ def create_RMSProp_op(loss, alpha, beta2, epsilon):
     epsilon -- small number to avoid division by zero
 
     Returns:
-    optimizer -- the configured RMSProp optimizer
+    train_op -- the operation that minimizes the loss
     """
     optimizer = tf.keras.optimizers.RMSprop(
         learning_rate=alpha, rho=beta2, epsilon=epsilon)
-    return optimizer
+    train_op = optimizer.minimize()
+    return train_op
