@@ -3,15 +3,15 @@
 module create_RMSProp_op
 """
 import tensorflow as tf
-import tensorflow.keras as keras
 
 
 def create_RMSProp_op(alpha, beta2, epsilon):
+    """ Function that creates the RMSProp optimization operation in Tensorflow
+    - alpha is the learning rate
+    - beta2 is the RMSProp weight
+    - epsilon is a small number to avoid division by zero
+    Returns: the RMSProp optimization operation
     """
-    creates the training operation for a neural network in tensorflow using
-    the RMSProp optimization algorithm
-    """
-    op = tf.keras.optimizers.RMSprop(learning_rate=alpha, decay=beta2,
-                                     epsilon=epsilon)
-    step_op = op.get_updates(loss=None, params=None)
-    return step_op
+    optimizer = tf.keras.optimizers.RMSprop(
+        learning_rate=alpha, rho=beta2, epsilon=epsilon)
+    return optimizer
