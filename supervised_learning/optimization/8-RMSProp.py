@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+""" Module to create the RMSProp optimizer in TensorFlow."""
+
+
 import tensorflow as tf
 
 
