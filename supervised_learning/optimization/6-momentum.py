@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """ Module that calculates the momentum of a data set."""
 
-
 import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 
 def create_momentum_op(alpha, beta1):
@@ -14,5 +14,5 @@ def create_momentum_op(alpha, beta1):
 
     Returns: optmizer operation
     """
-    optimizer = tf.train.MomentumOptimizer(alpha, beta1)
+    optimizer = tf.compat.v1.train.MomentumOptimizer(alpha, beta1)
     return optimizer
