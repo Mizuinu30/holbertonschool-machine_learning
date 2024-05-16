@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Module that that updates the learning rate using inverse time decay in numpy"""
+"""Module that that updates the learning rate
+using inverse time decay in numpy"""
 
 
 import numpy as np
