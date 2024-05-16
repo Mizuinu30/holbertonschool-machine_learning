@@ -20,10 +20,11 @@ def learning_rate_decay(alpha, decay_rate, decay_step):
     Returns:
     learning_rate -- the learning rate decay operation
     """
-    global_step = tf.Variable(0, trainable=False)
-    learning_rate = tf.keras.optimizers.schedules.InverseTimeDecay(
+    lr_schedule = tf.keras.optimizers.schedules.InverseTimeDecay(
         initial_learning_rate=alpha,
         decay_steps=decay_step,
         decay_rate=decay_rate,
-        staircase=True)(global_step)
-    return learning_rate
+        staircase=True
+    )
+
+    return lr_schedule
