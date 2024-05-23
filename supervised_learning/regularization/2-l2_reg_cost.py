@@ -4,6 +4,7 @@ module l2_reg_cost
 """
 
 import tensorflow as tf
+import tensorflow.keras as K
 
 
 def l2_reg_cost(cost, model):
