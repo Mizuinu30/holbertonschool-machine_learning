@@ -6,8 +6,8 @@ import numpy as np
 
 
 def f1_score(confusion):
-    # F1 score is the harmonic mean of precision and sensitivity
-    # F1 = 2 * (precision * sensitivity) / (precision + sensitivity)
+    """# F1 score is the harmonic mean of precision and sensitivity
+    # F1 = 2 * (precision * sensitivity) / (precision + sensitivity)"""
 
     # Import the required functions
     sensitivity = __import__('1-sensitivity').sensitivity
