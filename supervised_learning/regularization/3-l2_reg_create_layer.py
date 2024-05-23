@@ -2,7 +2,7 @@
 """
 module l2_reg_create_layer
 """
-import tensorflow.compat.v1 as tf
+import tensorflow as tf
 
 
 def l2_reg_create_layer(prev, n, activation, lambtha):
