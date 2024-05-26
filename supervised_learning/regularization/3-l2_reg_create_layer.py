@@ -2,29 +2,20 @@
 """L2 regularization in tensorflow"""
 
 import tensorflow as tf
-from tensorflow.keras import layers, regularizers, initializers
 
 
 def l2_reg_create_layer(prev, n, activation, lambtha):
-    """
-    Creates a dense layer with L2 regularization.
+    """Creates a dense layer with L2 regularization."""
+    init_weights = tf.keras.initializers.VarianceScaling(scale=2.0,
+                                                         mode="fan_avg")
 
-    Args:
-    prev: tensor, the output of the previous layer.
-    n: int, number of nodes in the new layer.
-    activation: function, the activation function to be used.
-    lambtha: float, the L2 regularization parameter.
+    l2_regularizer = tf.keras.regularizers.L2(lambtha)
 
-    Returns:
-    The output tensor of the new layer.
-    """
-    initializer = initializers.VarianceScaling(
-        scale=2.0, mode='fan_avg', distribution='untruncated_normal')
-
-    layer = layers.Dense(
+    layer = tf.keras.layers.Dense(
         units=n,
         activation=activation,
-        kernel_initializer=initializer,
-        kernel_regularizer=regularizers.l2(lambtha)
+        kernel_initializer=init_weights,
+        kernel_regularizer=l2_regularizer
     )
+
     return layer(prev)
