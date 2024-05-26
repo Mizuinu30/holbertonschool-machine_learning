@@ -1,12 +1,22 @@
 #!/usr/bin/env python3
-""" L2 Regularization Cost """
+"""L2 regularization in tensorflow"""
+
 import tensorflow as tf
 from tensorflow.keras import layers, regularizers
 
 
 def l2_reg_create_layer(prev, n, activation, lambtha):
     """
-    creates a tensorflow layer that includes L2 regularization
+    Creates a dense layer with L2 regularization.
+
+    Args:
+    prev: tensor, the output of the previous layer.
+    n: int, number of nodes in the new layer.
+    activation: function, the activation function to be used.
+    lambtha: float, the L2 regularization parameter.
+
+    Returns:
+    The output tensor of the new layer.
     """
     initializer = tf.keras.initializers.VarianceScaling(
         scale=2.0, mode='fan_avg', distribution='untruncated_normal')
