@@ -1,2 +1,1 @@
-# holbertonschool-machine_learning-keras
-not empty
+This is for the Keras exercises
