@@ -1,20 +1,29 @@
-#!/usr/bin/env python3
-""" a function that builds a neural network with the Keras library"""
-
-
 import tensorflow.keras as K
 
 
 def build_model(nx, layers, activations, lambtha, keep_prob):
-    """ a function that builds a neural network with the Keras library"""
-    model = K.Sequential()
-    L2 = K.regularizers.l2(lambtha)
+    """
+    Builds a neural network with the Keras library.
+
+    Parameters:
+    - nx: number of input features to the network
+    - layers: list containing the number of nodes in each layer of the network
+    - activations: list containing the activation functions used for each layer of the network
+    - lambtha: L2 regularization parameter
+    - keep_prob: probability that a node will be kept for dropout
+
+    Returns:
+    - model: the keras model
+    """
+    model = K.models.Sequential()
     for i in range(len(layers)):
         if i == 0:
-            model.add(layers.Dense(layers[i], activation=activations[i],
-                                   kernel_regularizer=L2, input_shape=(nx,)))
+            model.add(K.layers.Dense(layers[i], input_shape=(nx,), activation=activations[i],
+                                     kernel_regularizer=K.regularizers.l2(lambtha)))
         else:
-            model.add(layers.Dropout(1 - keep_prob))
-            model.add(layers.Dense(layers[i], activation=activations[i],
-                                   kernel_regularizer=L2))
+            model.add(K.layers.Dense(layers[i], activation=activations[i],
+                                     kernel_regularizer=K.regularizers.l2(lambtha)))
+        if keep_prob < 1:
+            model.add(K.layers.Dropout(1 - keep_prob))
+
     return model
