@@ -2,9 +2,7 @@
 """ a function that builds a neural network with the Keras library"""
 
 
-import tensorflow as tf
-import keras as K
-from keras import layers
+import tensorflow.keras as K
 
 
 def build_model(nx, layers, activations, lambtha, keep_prob):
