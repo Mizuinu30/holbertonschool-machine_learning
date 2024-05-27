@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+""" Module to build a neural network with the Keras library. """
+
+
 import tensorflow.keras as K
 
 
