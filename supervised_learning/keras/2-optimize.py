@@ -2,6 +2,7 @@
 """ Optimize Module """
 import tensorflow.keras as K
 
+
 def optimize_model(network, alpha, beta1, beta2):
     """
     Sets up Adam optimization for a Keras model with categorical crossentropy loss and accuracy metrics.
@@ -15,9 +16,11 @@ def optimize_model(network, alpha, beta1, beta2):
     Returns: None
     """
     # Set up the Adam optimizer with the provided parameters
-    optimizer = K.optimizers.Adam(learning_rate=alpha, beta_1=beta1, beta_2=beta2)
-    
+    optimizer = K.optimizers.Adam(l
+                                  earning_rate=alpha, beta_1=beta1, beta_2=beta2)
+
     # Compile the model with the optimizer, loss function, and metrics
-    network.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
-    
+    network.compile(optimizer=optimizer, loss='categorical_crossentropy',
+                    metrics=['accuracy'])
+
     return None
