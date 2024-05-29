@@ -5,7 +5,8 @@ import tensorflow.keras as K
 
 def optimize_model(network, alpha, beta1, beta2):
     """
-    Sets up Adam optimization for a Keras model with categorical crossentropy loss and accuracy metrics.
+    Sets up Adam optimization for a Keras 
+    model with categorical crossentropy loss and accuracy metrics.
 
     Parameters:
     - network: the model to optimize
