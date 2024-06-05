@@ -6,7 +6,7 @@ from tensorflow import keras as K
 def lenet5(X):
     """ builds a modified version of the
     LeNet-5 architecture using keras """
-    init = K.initializers.he_normal()
+    init = K.initializers.he_normal(seed=1)  # Add a seed here
     activation = 'relu'
     conv1 = K.layers.Conv2D(filters=6, kernel_size=5, padding='same',
                             activation=activation, kernel_initializer=init)(X)
@@ -19,7 +19,7 @@ def lenet5(X):
     FC1 = K.layers.Dense(units=120, activation=activation,
                          kernel_initializer=init)(flatten)
     FC2 = K.layers.Dense(units=84, activation=activation,
-                         kernel_initializer=init)(FC1)
+                         kernel_initializer=init)(flatten)  # Use the seeded initializer here too
     FC3 = K.layers.Dense(units=10, kernel_initializer=init,
                          activation='softmax')(FC2)
     model = K.models.Model(X, FC3)
