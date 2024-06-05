@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 """ CNN Module """
-import tensorflow.keras as K
+from tensorflow import keras as K
 
 
 def lenet5(X):
-    """
-    builds a modified version of the
-    LeNet-5 architecture using keras
-    """
+    """ builds a modified version of the
+    LeNet-5 architecture using keras """
     init = K.initializers.he_normal()
     activation = 'relu'
     conv1 = K.layers.Conv2D(filters=6, kernel_size=5, padding='same',
