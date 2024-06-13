@@ -17,52 +17,39 @@ def resnet50():
         keras.Model: The Keras model of the ResNet-50
         architecture
     """
-    input_shape = (224, 224, 3)
-    init = K.initializers.he_normal(seed=0)
-
-    X_input = K.Input(shape=input_shape)
+    inputs = K.Input(shape=(224, 224, 3))
 
     # Stage 1
-    X = K.layers.Conv2D(64, (7, 7), strides=(2, 2),
-                        padding='same', kernel_initializer=init)(
-                            X_input)
-    X = K.layers.BatchNormalization(axis=3)(X)
-    X = K.layers.Activation('relu')(X)
-    X = K.layers.MaxPooling2D((3, 3), strides=(2, 2),
-                              padding='same')(X)
+    x = K.layers.Conv2D(64, (7, 7), strides=(2, 2),
+                        padding='same', activation='linear',
+                        kernel_initializer=K.initializers.he_normal(
+                            seed=0))(inputs)
+    x = K.layers.BatchNormalization(axis=3)(x)
+    x = K.layers.Activation('relu')(x)
+    x = K.layers.MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
 
     # Stage 2
-    X = projection_block(X, [64, 64, 256], s=1)
-    X = identity_block(X, [64, 64, 256])
-    X = identity_block(X, [64, 64, 256])
+    x = projection_block(x, [64, 64, 256], s=1)
+    for _ in range(2):
+        x = identity_block(x, [64, 64, 256])
 
-    # Stage 3
-    X = projection_block(X, [128, 128, 512], s=2)
-    X = identity_block(X, [128, 128, 512])
-    X = identity_block(X, [128, 128, 512])
-    X = identity_block(X, [128, 128, 512])
+    x = projection_block(x, [128, 128, 512])
+    for _ in range(3):
+        x = identity_block(x, [128, 128, 512])
 
-    # Stage 4
-    X = projection_block(X, [256, 256, 1024], s=2)
-    X = identity_block(X, [256, 256, 1024])
-    X = identity_block(X, [256, 256, 1024])
-    X = identity_block(X, [256, 256, 1024])
-    X = identity_block(X, [256, 256, 1024])
-    X = identity_block(X, [256, 256, 1024])
+    x = projection_block(x, [256, 256, 1024])
+    for _ in range(5):
+        x = identity_block(x, [256, 256, 1024])
 
-    # Stage 5
-    X = projection_block(X, [512, 512, 2048], s=2)
-    X = identity_block(X, [512, 512, 2048])
-    X = identity_block(X, [512, 512, 2048])
+    x = projection_block(x, [512, 512, 2048])
+    for _ in range(2):
+        x = identity_block(x, [512, 512, 2048])
 
-    # Average Pooling
-    X = K.layers.AveragePooling2D((7, 7), padding='valid')(X)
+    # Apply average pooling and a softmax layer for the final output
+    x = K.layers.AveragePooling2D((7, 7), strides=(1, 1))(x)
+    outputs = K.layers.Dense(1000, activation='softmax')(x)
 
-    # Output layer
-    X = K.layers.Flatten()(X)
-    X = K.layers.Dense(1000, activation='softmax', kernel_initializer=init)(X)
-
-    # Create model
-    model = K.Model(inputs=X_input, outputs=X, name='ResNet50')
+    # Create the model
+    model = K.Model(inputs=inputs, outputs=outputs)
 
     return model
