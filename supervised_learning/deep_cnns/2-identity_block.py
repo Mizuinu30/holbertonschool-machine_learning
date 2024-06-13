@@ -4,7 +4,8 @@ from tensorflow import keras as K
 
 
 def identity_block(A_prev, filters):
-    """Builds an identity block as described in Deep Residual Learning for Image Recognition (2015)
+    """Builds an identity block as described in Deep
+    Residual Learning for Image Recognition (2015)
 
     Args:
         A_prev (tensor): output from the previous layer
