@@ -27,7 +27,8 @@ def inception_block(A_prev, filters):
                                kernel_initializer=init)(A_prev)
 
     # 1x1 Convolution followed by 3x3 Convolution branch
-    conv_3x3_reduce = K.layers.Conv2D(filters=F3R, kernel_size=1, padding='same',
+    conv_3x3_reduce = K.layers.Conv2D(filters=F3R, kernel_size=1,
+                                      padding='same',
                                       activation=activation,
                                       kernel_initializer=init)(A_prev)
     conv_3x3 = K.layers.Conv2D(filters=F3, kernel_size=3,
@@ -35,7 +36,8 @@ def inception_block(A_prev, filters):
                                kernel_initializer=init)(conv_3x3_reduce)
 
     # 1x1 Convolution followed by 5x5 Convolution branch
-    conv_5x5_reduce = K.layers.Conv2D(filters=F5R, kernel_size=1, padding='same',
+    conv_5x5_reduce = K.layers.Conv2D(filters=F5R, kernel_size=1,
+                                      padding='same',
                                       activation=activation,
                                       kernel_initializer=init)(A_prev)
     conv_5x5 = K.layers.Conv2D(filters=F5, kernel_size=5, padding='same',
