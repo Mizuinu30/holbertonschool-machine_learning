@@ -10,6 +10,7 @@ def projection_block(A_prev, filters, s=2):
     builds a projection block as described in Deep Residual Learning for Image
     Recognition(2015)
     """
+    K.set_seed(0)
     init = K.initializers.he_normal()
     F11, F3, F12 = filters
     conv1 = K.layers.Conv2D(filters=F11, kernel_size=1, strides=s,
