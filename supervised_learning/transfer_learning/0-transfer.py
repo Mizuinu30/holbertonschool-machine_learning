@@ -2,7 +2,6 @@
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow import keras as K
-preprocess_data = __import__('0-transfer').preprocess_data
 
 # to fix issue with saving keras applications
 K.learning_phase = K.backend.learning_phase
