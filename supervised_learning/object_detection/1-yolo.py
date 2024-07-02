@@ -42,8 +42,11 @@ class Yolo:
 
         for i, output in enumerate(outputs):
             grid_height, grid_width, anchor_boxes, _ = output.shape
-            t_x, t_y, t_w, t_h = output[..., :4].transpose(3, 0, 1, 2)
-
+            box = output[..., :4]
+            t_x = box[..., 0]
+            t_y = box[..., 1]
+            t_w = box[..., 2]
+            t_h = box[..., 3]
 
             c_x = np.arange(grid_width).reshape(1, grid_width)
             c_x = np.repeat(c_x, grid_height, axis=0)
