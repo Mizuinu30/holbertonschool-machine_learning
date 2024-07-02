@@ -4,6 +4,7 @@ that uses the Yolo v3 algorithm to perform object detection
 """
 import tensorflow.keras as K  # Importing the Keras library from TensorFlow
 
+
 class Yolo:
     """This class uses the Yolo v3 algorithm to perform object detection"""
 
@@ -29,7 +30,7 @@ class Yolo:
         self.model = K.models.load_model(model_path)  # Loading the Keras model
         # Open file and read content
         with open(classes_path, 'r') as f:  # Opening the list of class names
-            self.class_names = f.read().splitlines()  # Storing the list of class names
+            self.class_names = f.read().splitlines()  # Storing the list
         self.class_t = class_t  # Setting the box score threshold
         self.nms_t = nms_t  # Setting the IOU threshold
         self.anchors = anchors  # Setting the anchor boxes
