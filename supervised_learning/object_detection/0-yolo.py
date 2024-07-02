@@ -26,10 +26,10 @@ class Yolo:
                     prediction
                 2: [anchor_box_width, anchor_box_height]
         """
-        self.model = K.models.load_model(model_path)  # Loading the Keras model from the specified path
+        self.model = K.models.load_model(model_path)  # Loading the Keras model
         # Open file and read content
-        with open(classes_path, 'r') as f:  # Opening the classes file to read class names
-            self.class_names = f.read().splitlines()  # Reading class names and storing them in a list
-        self.class_t = class_t  # Setting the box score threshold for initial filtering
-        self.nms_t = nms_t  # Setting the IOU threshold for non-max suppression
-        self.anchors = anchors  # Storing the anchor boxes
+        with open(classes_path, 'r') as f:  # Opening the list of class names
+            self.class_names = f.read().splitlines()  # Storing the list of class names
+        self.class_t = class_t  # Setting the box score threshold
+        self.nms_t = nms_t  # Setting the IOU threshold
+        self.anchors = anchors  # Setting the anchor boxes
