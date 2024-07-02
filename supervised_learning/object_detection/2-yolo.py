@@ -93,31 +93,32 @@ class Yolo:
         return boxes, box_confidences, box_class_probs
 
     def filter_boxes(self, boxes, box_confidences, box_class_probs):
-        # Step 1: Compute box scores by multiplying the box confidences with the class probabilities.
-        box_scores = [conf * prob for conf, prob in zip(box_confidences, box_class_probs)]
-
-        # Step 2: Create lists to hold the filtered boxes, their class, and their scores.
-        filtered_boxes = []
+        """function that filters boxes based on their objectness score"""
+        box_scores = []
         box_classes = []
-        box_scores_list = []
+        filtered_boxes = []
 
-        # Step 3: Iterate over each set of scores to filter out boxes.
-        for score in box_scores:
-            # Find the class with the highest score for each box.
-            class_scores = np.max(score, axis=-1, keepdims=False)
-            classes = np.argmax(score, axis=-1)
+        for i, (box_confidence,
+                box_class_prob, box) in enumerate(zip(box_confidences,
+                                                      box_class_probs, boxes)):
+            box_scores_per_ouput = box_confidence * box_class_prob
+            max_box_scores = np.max(box_scores_per_ouput, axis=3)
+            max_box_scores = max_box_scores.reshape(-1)
+            max_box_classes = np.argmax(box_scores_per_ouput, axis=3)
+            max_box_classes = max_box_classes.reshape(-1)
+            box = box.reshape(-1, 4)
 
-            # Filter out boxes with a score lower than a threshold (e.g., 0.5).
-            filter_mask = class_scores >= 0.5
+            index_list = np.where(max_box_scores < self.class_t)
+            max_box_scores_filtered = np.delete(max_box_scores, index_list)
+            max_box_classes_filtered = np.delete(max_box_classes, index_list)
+            filtered_box = np.delete(box, index_list, axis=0)
 
-            # Apply the filter to the scores, classes, and boxes.
-            filtered_boxes.append(boxes[np.nonzero(filter_mask)])
-            box_classes.append(classes[np.nonzero(filter_mask)])
-            box_scores_list.append(class_scores[np.nonzero(filter_mask)])
+            box_scores.append(max_box_scores_filtered)
+            box_classes.append(max_box_classes_filtered)
+            filtered_boxes.append(filtered_box)
 
-        # Step 4: Concatenate the lists to get the final arrays.
+        box_scores = np.concatenate(box_scores)
+        box_classes = np.concatenate(box_classes)
         filtered_boxes = np.concatenate(filtered_boxes, axis=0)
-        box_classes = np.concatenate(box_classes, axis=0)
-        box_scores = np.concatenate(box_scores_list, axis=0)
 
-        return filtered_boxes, box_classes, box_scores
+        return (filtered_boxes, box_classes, box_scores)
