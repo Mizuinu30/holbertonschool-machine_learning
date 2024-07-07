@@ -75,9 +75,7 @@ class NST:
 
     def load_model(self):
         """Loads the model for Neural Style Transfer"""
-        # Initialize VGG19 as the base model, excluding the
-        # top layer (classifier)
-        # The model uses the default input size of 224x224 pixels
+
         base_vgg = tf.keras.applications.VGG19(
             include_top=False,
             weights="imagenet",
@@ -86,40 +84,18 @@ class NST:
             pooling=None,
             classes=1000,
         )
-        # Modify the model by substituting MaxPooling with
-        # AveragePooling
-        # Achieved by utilizing the custom_objects parameter
-        # during model loading
-        # This modification can enhance the quality of features
-        # extracted for NST
+
         custom_object = {"MaxPooling2D": tf.keras.layers.AveragePooling2D}
         base_vgg.save("base_vgg")
-        # Reload the VGG model with the pooling layers swapped
+
         vgg = tf.keras.models.load_model("base_vgg",
                                          custom_objects=custom_object)
-        # Directly setting vgg.trainable to False is ineffective
-        # Instead, set each layer's trainable attribute
-        # to False to lock weights
-        # Prevents the alteration of pre-trained weights
-        # during the NST process
+
         for layer in vgg.layers:
             layer.trainable = False
 
-        # Gather outputs from layers specified for capturing style
-        # These layers are predefined and crucial for extracting style features
         style_outputs = \
             [vgg.get_layer(name).output for name in self.style_layers]
-        # Similarly, capture the output from the designated content layer
-        # This layer is pivotal for content feature extraction
         content_output = vgg.get_layer(self.content_layer).output
-        # Merge style and content layer outputs for comprehensive
-        # feature representation
-        # This concatenated output facilitates simultaneous style
-        # and content optimization
         outputs = style_outputs + [content_output]
-        # Construct a new model tailored for NST by specifying
-        # desired inputs and outputs
-        # This custom model is central to the NST algorithm,
-        # enabling feature extraction
-        # The model is stored for subsequent use in the NST process
         self.model = tf.keras.models.Model(inputs=vgg.input, outputs=outputs)
