@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+""" This is the module 0-neural_style.py """
 
 import numpy as np
 import tensorflow as tf
+
 
 class NST:
     """This is the class NST"""
@@ -31,7 +33,8 @@ class NST:
             raise TypeError(error1)
         if style_image.shape[-1] != 3:
             raise TypeError(error1)
-        if not isinstance(content_image, np.ndarray) or content_image.ndim != 3:
+        if not isinstance(content_image, np.ndarray) or content_image.ndim \
+            != 3:
             raise TypeError(error2)
         if content_image.shape[-1] != 3:
             raise TypeError(error2)
