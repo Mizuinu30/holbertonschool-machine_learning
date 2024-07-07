@@ -2,8 +2,6 @@
 
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.applications.vgg19 import preprocess_input
-from tensorflow.image import resize
 
 class NST:
     style_layers = ['block1_conv1', 'block2_conv1', 'block3_conv1', 'block4_conv1', 'block5_conv1']
@@ -45,7 +43,7 @@ class NST:
             new_h = int(h * 512 / w)
 
         # Resize the image using bicubic interpolation
-        scaled_image = resize(image, (new_h, new_w), method='bicubic')
+        scaled_image = tf.image.resize(image, (new_h, new_w), method='bicubic')
 
         # Rescale pixel values to [0, 1] range
         scaled_image = np.expand_dims(scaled_image, axis=0)  # Add batch dimension
