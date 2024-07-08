@@ -180,31 +180,32 @@ class NST:
         return style_cost
 
     def style_cost(self, style_outputs):
-            """Calculates the style cost for generated image
-            Arguments:
-                style_outputs {list} -- a list of tf.Tensor
-                containing the style outputs for the generated image
-            Returns:
-                tf.Tensor -- the style cost"""
+        """Calculates the style cost for generated image
+        Arguments:
+            style_outputs {list} -- a list of tf.Tensor
+            containing the style outputs for the generated image
+        Returns:
+            tf.Tensor -- the style cost"""
 
-            st_len = len(self.style_layers)
-            err_list_check = \
-                "style_outputs must be a list with a length of {}".format(st_len)
-            if not isinstance(style_outputs, list):
+        st_len = len(self.style_layers)
+        err_list_check = \
+                "style_outputs must be a list with a length of {}".format(
+                    st_len)
+        if not isinstance(style_outputs, list):
                 raise TypeError(err_list_check)
-            if len(self.style_layers) != len(style_outputs):
+        if len(self.style_layers) != len(style_outputs):
                 raise TypeError(err_list_check)
 
-            style_costs = []
+        style_costs = []
 
-            weight = 1 / len(self.style_layers)
+        weight = 1 / len(self.style_layers)
 
-            for style_output, gram_target in zip(style_outputs,
-                                                self.gram_style_features):
+        for style_output, gram_target in zip(style_outputs,
+                                            self.gram_style_features):
                 layer_style_cost = self.layer_style_cost(style_output, gram_target)
                 weighted_layer_style_cost = weight * layer_style_cost
                 style_costs.append(weighted_layer_style_cost)
 
-            style_cost = tf.add_n(style_costs)
+        style_cost = tf.add_n(style_costs)
 
-            return style_cost
+        return style_cost
