@@ -160,7 +160,6 @@ class NST:
 
         c = style_output.shape[-1]
 
-
         err_1 = "style_output must be a tensor of rank 4"
         if not isinstance(style_output, (tf.Tensor, tf.Variable)):
             raise TypeError(err_1)
