@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""This module contain the class NST"""
+"""This module contains the class NST"""
 import numpy as np
 import tensorflow as tf
 
@@ -30,8 +30,7 @@ class NST:
         if not isinstance(style_image, np.ndarray) or style_image.ndim != 3 \
                 or style_image.shape[-1] != 3:
             raise TypeError(error1)
-        if not isinstance(
-            content_image, np.ndarray) or content_image.ndim != 3 \
+        if not isinstance(content_image, np.ndarray) or content_image.ndim != 3 \
                 or content_image.shape[-1] != 3:
             raise TypeError(error2)
         if not (isinstance(alpha, (float, int)) and alpha >= 0):
@@ -84,8 +83,9 @@ class NST:
         for layer in vgg.layers:
             layer.trainable = False
 
-        style_outputs = [vgg.get_layer(
-            name).output for name in self.style_layers]
+        style_outputs = [
+            vgg.get_layer(name).output for name in self.style_layers
+        ]
         content_output = vgg.get_layer(self.content_layer).output
         outputs = style_outputs + [content_output]
         self.model = tf.keras.models.Model(inputs=vgg.input, outputs=outputs)
@@ -102,7 +102,7 @@ class NST:
         """
         error = "input_layer must be a tensor of rank 4"
         if not isinstance(input_layer, (tf.Tensor, tf.Variable)) or len(
-            input_layer.shape) != 4:
+                input_layer.shape) != 4:
             raise TypeError(error)
 
         result = tf.linalg.einsum('bijc,bijd->bcd', input_layer, input_layer)
@@ -147,12 +147,11 @@ class NST:
 
         err_1 = "style_output must be a tensor of rank 4"
         if not isinstance(style_output, (tf.Tensor, tf.Variable)) or len(
-            style_output.shape) != 4:
+                style_output.shape) != 4:
             raise TypeError(err_1)
 
         err_2 = "gram_target must be a tensor of shape [1, {}, {}]".format(c, c)
-        if not isinstance(gram_target, (
-            tf.Tensor, tf.Variable)) or gram_target.shape != (1, c, c):
+        if not isinstance(gram_target, (tf.Tensor, tf.Variable)) or gram_target.shape != (1, c, c):
             raise TypeError(err_2)
 
         gram_style = self.gram_matrix(style_output)
@@ -172,14 +171,14 @@ class NST:
         st_len = len(self.style_layers)
         err_list_check = "style_outputs must be a list with a length of {}".format(st_len)
         if not isinstance(style_outputs, list) or len(
-            self.style_layers) != len(style_outputs):
+                self.style_layers) != len(style_outputs):
             raise TypeError(err_list_check)
 
         style_costs = []
         weight = 1 / len(self.style_layers)
 
         for style_output, gram_target in zip(
-            style_outputs, self.gram_style_features):
+                style_outputs, self.gram_style_features):
             layer_style_cost = self.layer_style_cost(style_output, gram_target)
             weighted_layer_style_cost = weight * layer_style_cost
             style_costs.append(weighted_layer_style_cost)
