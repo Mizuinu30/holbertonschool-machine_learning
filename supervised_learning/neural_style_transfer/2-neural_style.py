@@ -87,15 +87,40 @@ class NST:
 
         custom_object = {"MaxPooling2D": tf.keras.layers.AveragePooling2D}
         base_vgg.save("base_vgg")
-
         vgg = tf.keras.models.load_model("base_vgg",
                                          custom_objects=custom_object)
 
         for layer in vgg.layers:
             layer.trainable = False
 
+
         style_outputs = \
             [vgg.get_layer(name).output for name in self.style_layers]
+
         content_output = vgg.get_layer(self.content_layer).output
+
         outputs = style_outputs + [content_output]
+
         self.model = tf.keras.models.Model(inputs=vgg.input, outputs=outputs)
+
+    @staticmethod
+    def gram_matrix(input_layer):
+        """Calculates the gram matrix of a layer
+        Arguments:
+            input_layer {tf.Tensor} -- the layer for which to calculate
+            the gram matrix
+        Returns:
+            tf.Tensor -- the gram matrix
+        """
+        error = "input_layer must be a tensor of rank 4"
+        if not isinstance(input_layer, (tf.Tensor, tf.Variable)):
+            raise TypeError(error)
+        if len(input_layer.shape) != 4:
+            raise TypeError(error)
+
+
+        result = tf.linalg.einsum('bijc,bijd->bcd', input_layer, input_layer)
+
+        input_shape = tf.shape(input_layer)
+        num_locations = tf.cast(input_shape[1] * input_shape[2], tf.float32)
+        return result / num_locations
