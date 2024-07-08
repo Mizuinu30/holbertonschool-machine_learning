@@ -93,7 +93,6 @@ class NST:
         for layer in vgg.layers:
             layer.trainable = False
 
-
         style_outputs = \
             [vgg.get_layer(name).output for name in self.style_layers]
 
@@ -117,7 +116,6 @@ class NST:
             raise TypeError(error)
         if len(input_layer.shape) != 4:
             raise TypeError(error)
-
 
         result = tf.linalg.einsum('bijc,bijd->bcd', input_layer, input_layer)
 
