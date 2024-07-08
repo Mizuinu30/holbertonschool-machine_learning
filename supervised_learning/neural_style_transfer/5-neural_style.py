@@ -27,9 +27,11 @@ class NST:
         """
         error1 = "style_image must be a numpy.ndarray with shape (h, w, 3)"
         error2 = "content_image must be a numpy.ndarray with shape (h, w, 3)"
-        if not isinstance(style_image, np.ndarray) or style_image.ndim != 3 or style_image.shape[-1] != 3:
+        if not isinstance(style_image, np.ndarray) or style_image.ndim != 3 \
+                or style_image.shape[-1] != 3:
             raise TypeError(error1)
-        if not isinstance(content_image, np.ndarray) or content_image.ndim != 3 or content_image.shape[-1] != 3:
+        if not isinstance(content_image, np.ndarray) or content_image.ndim != 3 \
+                or content_image.shape[-1] != 3:
             raise TypeError(error2)
         if not (isinstance(alpha, (float, int)) and alpha >= 0):
             raise TypeError("alpha must be a non-negative number")
@@ -53,7 +55,8 @@ class NST:
             np.ndarray -- the scaled image
         """
         error = "image must be a numpy.ndarray with shape (h, w, 3)"
-        if not isinstance(image, np.ndarray) or image.ndim != 3 or image.shape[-1] != 3:
+        if not isinstance(image, np.ndarray) or image.ndim != 3 \
+                or image.shape[-1] != 3:
             raise TypeError(error)
         max_dim = 512
         h, w, _ = image.shape
@@ -69,7 +72,9 @@ class NST:
         """
         Loads the model for Neural Style Transfer
         """
-        base_vgg = tf.keras.applications.VGG19(include_top=False, weights="imagenet")
+        base_vgg = tf.keras.applications.VGG19(
+            include_top=False, weights="imagenet"
+        )
         custom_object = {"MaxPooling2D": tf.keras.layers.AveragePooling2D}
         base_vgg.save("base_vgg")
         vgg = tf.keras.models.load_model("base_vgg", custom_objects=custom_object)
@@ -107,8 +112,10 @@ class NST:
             gram_style_features - a list of gram matrices calculated from the style layer outputs
             content_feature - the content later output of the content image
         """
-        style_image = tf.keras.applications.vgg19.preprocess_input(self.style_image * 255)
-        content_image = tf.keras.applications.vgg19.preprocess_input(self.content_image * 255)
+        style_image = tf.keras.applications.vgg19.preprocess_input(
+            self.style_image * 255)
+        content_image = tf.keras.applications.vgg19.preprocess_input(
+            self.content_image * 255)
 
         style_outputs = self.model(style_image)
         content_output = self.model(content_image)
@@ -116,7 +123,9 @@ class NST:
         style_features = style_outputs[:-1]
         content_feature = content_output[-1]
 
-        self.gram_style_features = [NST.gram_matrix(style_feature) for style_feature in style_features]
+        self.gram_style_features = [
+            NST.gram_matrix(style_feature) for style_feature in style_features
+        ]
         self.content_feature = content_feature
 
     def layer_style_cost(self, style_output, gram_target):
