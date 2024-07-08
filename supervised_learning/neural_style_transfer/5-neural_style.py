@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """This module contain the class NST"""
+
 import numpy as np
 import tensorflow as tf
 
