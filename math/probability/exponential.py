@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """This module contains the Exponential class"""
 
+import math
+
 
 class Exponential:
     """This class represents an exponential distribution"""
