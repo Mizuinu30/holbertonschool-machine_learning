@@ -19,11 +19,9 @@ class Binomial:
                 raise TypeError("data must be a list")
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
-            # Calculate p as the mean of data (success rate)
+            # Calculate p as the proportion of successes in the data
             p = sum(data) / len(data)
-            # Calculate n as the rounded value of the trials based on p
-            n = round(sum(data) / p)
-            # Recalculate p with the new n value
-            p = sum(data) / n
+            # n is simply the total number of trials, which is the length of the data list
+            n = len(data)
             self.n = int(n)
             self.p = float(p)
