@@ -3,10 +3,7 @@
 
 
 class Binomial:
-    """ Class Binomial represents a binomial distribution"""
-
     def __init__(self, data=None, n=1, p=0.5):
-        """ Constructor of the Binomial class"""
         if data is None:
             if n <= 0:
                 raise ValueError("n must be a positive value")
@@ -21,7 +18,9 @@ class Binomial:
                 raise ValueError("data must contain multiple values")
             # Calculate p as the proportion of successes in the data
             p = sum(data) / len(data)
-            # n is simply the total number of trials, which is the length of the data list
-            n = len(data)
-            self.n = int(n)
+            # n is the rounded total number of trials, which is the length of the data list
+            n = round(len(data))
+            # Recalculate p with the rounded n to ensure consistency
+            p = sum(data) / n
+            self.n = n
             self.p = float(p)
