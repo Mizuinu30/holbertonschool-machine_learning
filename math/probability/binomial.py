@@ -24,3 +24,15 @@ class Binomial:
             p = sum(data) / n
             self.n = n
             self.p = float(p)
+
+        def pmf(self, k):
+            from math import factorial
+
+            k = int(k)  # Ensure k is an integer
+            if k < 0 or k > self.n:
+                return 0  # k is out of range
+
+            # Calculate the PMF using the formula: (n choose k) * (p ** k) * ((1 - p) ** (n - k))
+            pmf_value = (factorial(self.n) / (factorial(k) * factorial(
+                self.n - k))) * (self.p ** k) * ((1 - self.p) ** (self.n - k))
+            return pmf_value
