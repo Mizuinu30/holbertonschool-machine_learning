@@ -58,3 +58,33 @@ class MultiNormal:
         mean, cov = mean_cov(data.T)
         self.mean = mean.T
         self.cov = cov
+
+    def pdf(self, x):
+        """
+            calculates the PDF at a data point
+
+            :param x: ndarray, shape(d,1) data point
+                    d: number of dimensions of the Multinomial instance
+
+            :return: value of the PDF
+            f(x) = (1 / (sqrt((2 * π)^k * det(Σ)))) *
+              exp(-0.5 * (x - μ)^T * Σ^(-1) * (x - μ))
+        """
+        if not isinstance(x, np.ndarray):
+            raise TypeError("x must be a numpy.ndarray")
+
+        d = self.mean.shape[0]
+        if x.ndim != 2 or x.shape != (d, 1):
+            raise ValueError("x must have the shape ({}, 1)".
+                             format(d))
+
+        # calculate PDF
+        cov_det = np.linalg.det(self.cov)
+        cov_inv = np.linalg.inv(self.cov)
+
+        exponent = -0.5 * np.matmul(np.matmul((x - self.mean).T, cov_inv),
+                                    (x - self.mean))
+        coefficient = (1 / np.sqrt((2 * np.pi) ** d * cov_det))
+        pdf_value = coefficient * np.exp(exponent)
+
+        return pdf_value[0][0]
