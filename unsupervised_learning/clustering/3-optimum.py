@@ -1,9 +1,4 @@
-#!/usr/bin/env python3
-"""tests for the optimum number of clusters by variance"""
 import numpy as np
-kmeans = __import__('1-kmeans').kmeans
-variance = __import__('2-variance').variance
-
 
 def optimum_k(X, kmin=1, kmax=None, iterations=1000):
     """ tests for the optimum number of clusters by variance
@@ -29,12 +24,19 @@ def optimum_k(X, kmin=1, kmax=None, iterations=1000):
         return None, None
 
     results, d_vars = [], []
+    first_var = None
+
     for i in range(kmin, kmax + 1):
         centroids, clss = kmeans(X, i, iterations)
         results.append((centroids, clss))
         var = variance(X, centroids)
-        if i == kmin:
+
+        if var is None:
+            continue  # Skip this iteration if var is None
+
+        if first_var is None:
             first_var = var
+
         # get diff
         d_vars.append(first_var - var)
 
