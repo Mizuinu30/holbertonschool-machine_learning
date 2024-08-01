@@ -1,54 +1,25 @@
-#!/usr/bin/env python3
-""" Performs K-means clustering on a dataset. """
-
 import numpy as np
 
-
-def initialize(X, k):
+def kmeans(X, k, iterations):
     """
-    Initializes cluster centroids for K-means.
-
-    Parameters:
-    X (numpy.ndarray): The dataset of shape (n, d) to be used for K-means clustering.
-        n is the number of data points.
-        d is the number of dimensions for each data point.
-    k (int): A positive integer containing the number of clusters.
-
-    Returns:
-    numpy.ndarray: A numpy array of shape (k, d) containing the initialized centroids for each cluster,
-                   or None on failure.
-    """
-    if not isinstance(X, np.ndarray) or not isinstance(k, int) or k <= 0:
-        return None
-
-    if X.ndim != 2:
-        return None
-
-    n, d = X.shape
-    min_vals = np.min(X, axis=0)
-    max_vals = np.max(X, axis=0)
-
-    centroids = np.random.uniform(min_vals, max_vals, (k, d))
-
-    return centroids
-
-def kmeans(X, k, iterations=1000):
-    """_summary_
+    Perform K-means clustering on the dataset X.
 
     Args:
-        X (_type_): _description_
-        k (_type_): _description_
-        iterations (int, optional): _description_. Defaults to 1000.
+        X (np.ndarray): The dataset.
+        k (int): The number of clusters.
+        iterations (int): The maximum number of iterations.
 
     Returns:
-        _type_: _description_
+        tuple: (C, clss) where C is the array of centroids and clss is the array of cluster assignments.
     """
     if not isinstance(X, np.ndarray) or not isinstance(k, int) or k <= 0 or not isinstance(iterations, int) or iterations <= 0:
         return None, None
+
     n, d = X.shape
     C = initialize(X, k)
     if C is None:
         return None, None
+
     for _ in range(iterations):
         distances = np.linalg.norm(X[:, np.newaxis] - C, axis=2)
         clss = np.argmin(distances, axis=1)
@@ -56,4 +27,19 @@ def kmeans(X, k, iterations=1000):
         if np.all(C == new_C):
             break
         C = new_C
+
     return C, clss
+
+def initialize(X, k):
+    """
+    Initialize centroids for K-means.
+
+    Args:
+        X (np.ndarray): The dataset.
+        k (int): The number of clusters.
+
+    Returns:
+        np.ndarray: The initialized centroids.
+    """
+    n, d = X.shape
+    return X[np.random.choice(n, k, replace=False)]
