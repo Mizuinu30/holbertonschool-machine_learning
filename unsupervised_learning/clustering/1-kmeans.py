@@ -1,48 +1,34 @@
 #!/usr/bin/env python3
+"""K-means clustering"""
+
+
 import numpy as np
 
 def initialize(X, k):
-    """
-    Initializes cluster centroids for K-means using a multivariate uniform distribution.
-
-    Parameters:
-    - X: numpy.ndarray of shape (n, d) containing the dataset
-    - k: positive integer containing the number of clusters
-
-    Returns:
-    - numpy.ndarray of shape (k, d) containing the initialized centroids for each cluster
-    - None on failure (e.g., if k is not a positive integer or X is not a valid array)
-    """
-    if not isinstance(X, np.ndarray) or X.ndim != 2 or not isinstance(k, int) or k <= 0:
+    """Initializes cluster centroids for K-means"""
+    if not isinstance(X, np.ndarray) or len(X.shape) != 2:
         return None
-
-    # Find the minimum and maximum values for each dimension
-    min_vals = X.min(axis=0)
-    max_vals = X.max(axis=0)
-
-    # Generate k random centroids within the specified range
-    centroids = np.random.uniform(low=min_vals, high=max_vals, size=(k, X.shape[1]))
-
-    return centroids
+    if not isinstance(k, int) or k <= 0 or k > X.shape[0]:
+        return None
+    n, d = X.shape
+    return np.random.uniform(X.min(axis=0), X.max(axis=0), (k, d))
 
 def kmeans(X, k, iterations=1000):
     """
     Performs K-means on a dataset.
 
     Parameters:
-    - X: numpy.ndarray of shape (n, d) containing the dataset
-    - k: positive integer containing the number of clusters
-    - iterations: positive integer containing the maximum number of iterations
+    X (numpy.ndarray): Dataset of shape (n, d)
+    k (int): Number of clusters
+    iterations (int): Maximum number of iterations
 
     Returns:
-    - C: numpy.ndarray of shape (k, d) containing the centroid means for each cluster
-    - clss: numpy.ndarray of shape (n,) containing the index of the cluster in C that each data point belongs to
-    - (None, None) on failure
+    C (numpy.ndarray): Centroid means for each cluster
+    clss (numpy.ndarray): Index of the cluster in C that each data point belongs to
     """
-    # Validate inputs
-    if not isinstance(X, np.ndarray) or X.ndim != 2:
+    if not isinstance(X, np.ndarray) or len(X.shape) != 2:
         return None, None
-    if not isinstance(k, int) or k <= 0:
+    if not isinstance(k, int) or k <= 0 or k > X.shape[0]:
         return None, None
     if not isinstance(iterations, int) or iterations <= 0:
         return None, None
