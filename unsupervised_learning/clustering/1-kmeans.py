@@ -4,48 +4,81 @@
 
 import numpy as np
 
-def kmeans(X, k, iterations):
-    """
-    Perform K-means clustering on the dataset X.
-
-    Args:
-        X (np.ndarray): The dataset.
-        k (int): The number of clusters.
-        iterations (int): The maximum number of iterations.
-
-    Returns:
-        tuple: (C, clss) where C is the array of centroids and clss is the array of cluster assignments.
-    """
-    if not isinstance(X, np.ndarray) or not isinstance(k, int) or k <= 0 or not isinstance(iterations, int) or iterations <= 0:
-        return None, None
-
-    n, d = X.shape
-    C = initialize(X, k)
-    if C is None:
-        return None, None
-
-    for _ in range(iterations):
-        distances = np.linalg.norm(X[:, np.newaxis] - C, axis=2)
-        clss = np.argmin(distances, axis=1)
-        new_C = np.array([X[clss == i].mean(axis=0) if np.any(clss == i) else np.random.uniform(np.min(X, axis=0), np.max(X, axis=0), d) for i in range(k)])
-        if np.all(C == new_C):
-            break
-        C = new_C
-
-    return C, clss
-
 def initialize(X, k):
     """
-    Initialize centroids for K-means.
+    Initializes cluster centroids for K-means using a multivariate uniform distribution.
 
-    Args:
-        X (np.ndarray): The dataset.
-        k (int): The number of clusters.
+    Parameters:
+    - X: numpy.ndarray of shape (n, d) containing the dataset
+    - k: positive integer containing the number of clusters
 
     Returns:
-        np.ndarray: The initialized centroids.
+    - numpy.ndarray of shape (k, d) containing the initialized centroids for each cluster
+    - None on failure (e.g., if k is not a positive integer or X is not a valid array)
     """
+    if not isinstance(X, np.ndarray) or X.ndim != 2 or not isinstance(k, int) or k <= 0:
+        return None
+
+    # Find the minimum and maximum values for each dimension
+    min_vals = X.min(axis=0)
+    max_vals = X.max(axis=0)
+
+    # Generate k random centroids within the specified range
+    centroids = np.random.uniform(low=min_vals, high=max_vals, size=(k, X.shape[1]))
+
+    return centroids
+
+def kmeans(X, k, iterations=1000):
+    """
+    Performs K-means on a dataset.
+
+    Parameters:
+    - X: numpy.ndarray of shape (n, d) containing the dataset
+    - k: positive integer containing the number of clusters
+    - iterations: positive integer containing the maximum number of iterations
+
+    Returns:
+    - C: numpy.ndarray of shape (k, d) containing the centroid means for each cluster
+    - clss: numpy.ndarray of shape (n,) containing the index of the cluster in C that each data point belongs to
+    - (None, None) on failure
+    """
+    # Validate inputs
+    if not isinstance(X, np.ndarray) or X.ndim != 2:
+        return None, None
+    if not isinstance(k, int) or k <= 0:
+        return None, None
+    if not isinstance(iterations, int) or iterations <= 0:
+        return None, None
+
     n, d = X.shape
-    low = np.min(X, axis=0)
-    high = np.max(X, axis=0)
-    return np.random.uniform(low, high, size=(k, d))
+
+    # Initialize centroids
+    centroids = initialize(X, k)
+    if centroids is None:
+        return None, None
+
+    # Initialize variables
+    prev_centroids = np.copy(centroids)
+    for i in range(iterations):
+        # Step 1: Assign clusters
+        # Compute the distance from each point to each centroid
+        distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2)
+
+        # Assign each point to the nearest centroid
+        clss = np.argmin(distances, axis=1)
+
+        # Step 2: Update centroids
+        for j in range(k):
+            if np.any(clss == j):
+                # Update centroid to mean of assigned points
+                centroids[j] = X[clss == j].mean(axis=0)
+            else:
+                # Reinitialize centroid if it has no points
+                centroids[j] = np.random.uniform(X.min(axis=0), X.max(axis=0))
+
+        # Step 3: Check for convergence
+        if np.allclose(centroids, prev_centroids):
+            break
+        prev_centroids = np.copy(centroids)
+
+    return centroids, clss
