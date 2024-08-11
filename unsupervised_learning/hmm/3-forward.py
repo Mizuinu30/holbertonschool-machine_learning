@@ -3,6 +3,7 @@
 algorithm for a hidden Markov model."""
 import numpy as np
 
+
 def forward(Observation, Emission, Transition, Initial):
     """This function calculates the forward algorithm for a hidden Markov
     model.
