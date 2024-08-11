@@ -8,21 +8,29 @@ def backward(Observation, Emission, Transition, Initial):
     """Performs the backward algorithm for a hidden Markov model.
 
     Args:
-        Observation: numpy.ndarray of shape (T,) that contains the index of the observations.
+        Observation: numpy.ndarray of shape (T,) that contains
+          the index of the observations.
             T: the number of observations.
-        Emission: numpy.ndarray of shape (N, M) containing the emission probability of a specific
+        Emission: numpy.ndarray of shape (N, M) containing
+          the emission probability of a specific
                   observation given a hidden state.
-            Emission[i, j]: the probability of observing j given the hidden state i.
+            Emission[i, j]: the probability of observing j
+            given the hidden state i.
             N: the number of hidden states.
             M: the number of all possible observations.
-        Transition: 2D numpy.ndarray of shape (N, N) containing the transition probabilities.
-            Transition[i, j]: the probability of transitioning from the hidden state i to j.
-        Initial: numpy.ndarray of shape (N, 1) containing the probability of starting in a particular hidden state.
+        Transition: 2D numpy.ndarray of shape (N, N) containing
+          the transition probabilities.
+            Transition[i, j]: the probability of transitioning
+            from the hidden state i to j.
+        Initial: numpy.ndarray of shape (N, 1) containing
+          the probability of starting in a particular hidden state.
 
     Returns:
         P: the likelihood of the observations given the model.
-        B: numpy.ndarray of shape (N, T) containing the backward path probabilities.
-           B[i, j]: the probability of generating the future observations from hidden state i at time j.
+        B: numpy.ndarray of shape (N, T) containing the
+          backward path probabilities.
+           B[i, j]: the probability of generating the
+             future observations from hidden state i at time j.
     """
     # Step 1: Validate the inputs
     if (not isinstance(Observation, np.ndarray) or Observation.ndim != 1 or
@@ -53,7 +61,8 @@ def backward(Observation, Emission, Transition, Initial):
     # Step 3: Recursion
     for t in range(T-2, -1, -1):
         for i in range(N):
-            B[i, t] = np.sum(B[:, t+1] * Transition[i, :] * Emission[:, Observation[t+1]])
+            B[i, t] = np.sum(
+                B[:, t+1] * Transition[i, :] * Emission[:, Observation[t+1]])
 
     # Step 4: Calculate the likelihood of the observations given the model
     P = np.sum(Initial[:, 0] * Emission[:, Observation[0]] * B[:, 0])
