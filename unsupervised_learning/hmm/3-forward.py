@@ -38,17 +38,17 @@ def forward(Observation, Emission, Transition, Initial):
         not isinstance(Emission, np.ndarray) or Emission.ndim != 2 or
         not isinstance(Initial, np.ndarray) or Initial.ndim != 2 or
         not isinstance(Transition, np.ndarray) or Transition.ndim != 2):
-        return None, None
+            return None, None
 
     if (Emission.shape[0] != Transition.shape[0] or
         Transition.shape[0] != Transition.shape[1] or
         Initial.shape[0] != Transition.shape[0] or Initial.shape[1] != 1):
-        return None, None
+            return None, None
 
     if (not np.isclose(np.sum(Emission, axis=1), 1).all() or
         not np.isclose(np.sum(Transition, axis=1), 1).all() or
         not np.isclose(np.sum(Initial), 1)):
-        return None, None
+            return None, None
 
     # Step 2: Initialize variables
     N = Initial.shape[0]  # Number of hidden states
