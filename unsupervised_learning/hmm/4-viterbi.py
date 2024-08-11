@@ -62,7 +62,8 @@ def viterbi(Observation, Emission, Transition, Initial):
     for t in range(1, T):
         for s in range(N):
             transition_probs = viterbi[:, t-1] * Transition[:, s]
-            viterbi[s, t] = np.max(transition_probs) * Emission[s, Observation[t]]
+            viterbi[s, t] = np.max(
+                transition_probs) * Emission[s, Observation[t]]
             backpointer[s, t] = np.argmax(transition_probs)
 
     # Step 4: Termination
