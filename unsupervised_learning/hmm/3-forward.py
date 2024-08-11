@@ -57,10 +57,12 @@ def forward(Observation, Emission, Transition, Initial):
     F = np.zeros((N, T))
     F[:, 0] = Initial[:, 0] * Emission[:, Observation[0]]
 
-    # Step 3: Iterate over the observations to calculate the forward probabilities
+    # Step 3: Iterate over the observations
+    #  to calculate the forward probabilities
     for t in range(1, T):
         for j in range(N):
-            F[j, t] = np.sum(F[:, t-1] * Transition[:, j] * Emission[j, Observation[t]])
+            F[j, t] = np.sum(
+                F[:, t-1] * Transition[:, j] * Emission[j, Observation[t]])
 
     # Step 4: Calculate the likelihood of the observations given the model
     P = np.sum(F[:, -1])
