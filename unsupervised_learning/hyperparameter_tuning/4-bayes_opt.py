@@ -55,8 +55,10 @@ class BayesianOptimization:
         """Calculates the next best sample location using Expected Improvement.
 
         Returns:
-            X_next: numpy.ndarray of shape (1,) representing the next best sample point.
-            EI: numpy.ndarray of shape (ac_samples,) containing the expected improvement of each potential sample.
+            X_next: numpy.ndarray of shape (1,)
+            representing the next best sample point.
+            EI: numpy.ndarray of shape (ac_samples,)
+            containing the expected improvement of each potential sample.
         """
         mu, sigma = self.gp.predict(self.X_s)
 
