@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+"""
+Defines function that creates a variational autoencoder
+"""
+
+
 from tensorflow.keras.layers import Input, Dense, Lambda
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
@@ -6,6 +12,7 @@ import tensorflow.keras.backend as K
 import numpy as np
 
 def sampling(args):
+    """ Sampling function for variational autoencoder """
     z_mean, z_log_var = args
     batch = K.shape(z_mean)[0]
     dim = K.int_shape(z_mean)[1]
@@ -13,6 +20,7 @@ def sampling(args):
     return z_mean + K.exp(0.5 * z_log_var) * epsilon
 
 def vae_loss(input_layer, output_layer, z_mean, z_log_var):
+    """ Loss function for variational autoencoder """
     reconstruction_loss = binary_crossentropy(input_layer, output_layer)
     reconstruction_loss *= input_layer.shape[1]
     kl_loss = 1 + z_log_var - K.square(z_mean) - K.exp(z_log_var)
@@ -21,6 +29,7 @@ def vae_loss(input_layer, output_layer, z_mean, z_log_var):
     return K.mean(reconstruction_loss + kl_loss)
 
 def autoencoder(input_dims, hidden_layers, latent_dims):
+    """  Creates a variational autoencoder"""
     # Encoder
     input_layer = Input(shape=(input_dims,))
     x = input_layer
