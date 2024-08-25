@@ -1,61 +1,51 @@
 #!/usr/bin/env python3
-"""This module contains a function that creates a variational autoencoder"""
-
-import tensorflow.keras as keras
-import tensorflow.keras.backend as K
-
-
-def sampling(args):
-    """This function samples from the mean and log variation"""
-    mean, log_variation = args
-    epsilon = K.random_normal(shape=K.shape(mean))
-    return mean + K.exp(log_variation * 0.5) * epsilon
-
-def vae_loss(input_layer, output_layer, mean, log_variation):
-    """This function calculates the VAE loss"""
-    reconstruction_loss = keras.losses.binary_crossentropy(input_layer, output_layer)
-    reconstruction_loss *= input_layer.shape[1]
-    kl_loss = 1 + log_variation - K.square(mean) - K.exp(log_variation)
-    kl_loss = K.sum(kl_loss, axis=-1)
-    kl_loss *= -0.5
-    return K.mean(reconstruction_loss + kl_loss)
+"""This module contains a function that creates a variational autoencoder."""
+from tensorflow import keras
 
 def autoencoder(input_dims, hidden_layers, latent_dims):
-    """This function creates a variational autoencoder"""
+    """This function creates a variational autoencoder.
+
+    Args:
+        input_dims (int): The dimensionality of the input data.
+        hidden_layers (list of int): The number of units in each hidden layer.
+        latent_dims (int): The dimensionality of the latent space.
+
+    Returns:
+        encoder (keras.Model): The encoder model.
+        decoder (keras.Model): The decoder model.
+        auto (keras.Model): The full autoencoder model.
+    """
+    # Encoder
     encoder_inputs = keras.Input(shape=(input_dims,))
-    for idx, units in enumerate(hidden_layers):
-        layer = keras.layers.Dense(units=units, activation="relu")
-        if idx == 0:
-            outputs = layer(encoder_inputs)
-        else:
-            outputs = layer(outputs)
-    layer = keras.layers.Dense(units=latent_dims)
-    mean = layer(outputs)
-    layer = keras.layers.Dense(units=latent_dims)
-    log_variation = layer(outputs)
+    x = encoder_inputs
+    for units in hidden_layers:
+        x = keras.layers.Dense(units=units, activation="relu")(x)
 
-    z = keras.layers.Lambda(sampling, output_shape=(latent_dims,))(
-        [mean, log_variation]
-    )
-    encoder = keras.models.Model(
-        inputs=encoder_inputs, outputs=[z, mean, log_variation]
-    )
+    mean = keras.layers.Dense(units=latent_dims)(x)
+    log_variance = keras.layers.Dense(units=latent_dims)(x)
 
+    def sampling(args):
+        """Samples from the mean and log variance."""
+        mean, log_variance = args
+        epsilon = keras.backend.random_normal(shape=keras.backend.shape(mean))
+        return mean + keras.backend.exp(log_variance * 0.5) * epsilon
+
+    z = keras.layers.Lambda(sampling, output_shape=(latent_dims,))([mean, log_variance])
+    encoder = keras.models.Model(inputs=encoder_inputs, outputs=[z, mean, log_variance])
+
+    # Decoder
     decoder_inputs = keras.Input(shape=(latent_dims,))
-    for idx, units in enumerate(reversed(hidden_layers)):
-        layer = keras.layers.Dense(units=units, activation="relu")
-        if idx == 0:
-            outputs = layer(decoder_inputs)
-        else:
-            outputs = layer(outputs)
-    layer = keras.layers.Dense(units=input_dims, activation="sigmoid")
-    outputs = layer(outputs)
-    decoder = keras.models.Model(inputs=decoder_inputs, outputs=outputs)
+    x = decoder_inputs
+    for units in reversed(hidden_layers):
+        x = keras.layers.Dense(units=units, activation="relu")(x)
 
-    outputs = encoder(encoder_inputs)
-    outputs = decoder(outputs[0])
-    auto = keras.models.Model(inputs=encoder_inputs, outputs=outputs)
+    decoder_outputs = keras.layers.Dense(units=input_dims, activation="sigmoid")(x)
+    decoder = keras.models.Model(inputs=decoder_inputs, outputs=decoder_outputs)
 
-    auto.compile(optimizer="adam", loss=lambda y_true, y_pred: vae_loss(encoder_inputs, y_pred, mean, log_variation))
+    # VAE Model
+    vae_outputs = decoder(encoder(encoder_inputs)[0])
+    auto = keras.models.Model(inputs=encoder_inputs, outputs=vae_outputs)
+
+    auto.compile(optimizer="adam", loss="binary_crossentropy")
 
     return encoder, decoder, auto
