@@ -79,7 +79,7 @@ generator, discriminator = convolutional_GenDiscr()
 print("Generator and discriminator models created.")
 
 # Create the WGAN_clip model
-latent_generator = lambda size: tf.random.normal([size, 100])
+latent_generator = lambda size: tf.random.normal([size, 16])  # Adjusted to match the generator's input shape
 real_examples = np.random.rand(1000, 16, 16, 1).astype(np.float32)
 
 try:
