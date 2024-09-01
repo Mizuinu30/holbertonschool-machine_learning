@@ -5,10 +5,12 @@ from tensorflow import keras
 
 
 class WGAN_clip(keras.Model):
+    """ WGAN class that inherits from keras.Model """
 
     def __init__(
         self, generator, discriminator, latent_generator,
-        real_examples, batch_size=200, disc_iter=2, learning_rate=.005):
+            real_examples, batch_size=200, disc_iter=2, learning_rate=.005):
+        """ Init function for the WGAN class """
         super().__init__()
         self.latent_generator = latent_generator
         self.real_examples = real_examples
