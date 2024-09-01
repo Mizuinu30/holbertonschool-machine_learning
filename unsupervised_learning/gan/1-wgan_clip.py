@@ -21,7 +21,8 @@ class WGAN_clip(keras.Model):
         # Define the generator loss and optimizer
         self.generator.loss = lambda x: -tf.math.reduce_mean(x)
         self.generator.optimizer = keras.optimizers.Adam(
-            learning_rate=self.learning_rate, beta_1=self.beta_1, beta_2=self.beta_2)
+            learning_rate=self.learning_rate,
+            beta_1=self.beta_1, beta_2=self.beta_2)
         self.generator.compile(
             optimizer=self.generator.optimizer, loss=self.generator.loss)
 
@@ -29,9 +30,11 @@ class WGAN_clip(keras.Model):
         self.discriminator.loss = lambda x, y: tf.math.reduce_mean(
             y) - tf.math.reduce_mean(x)
         self.discriminator.optimizer = keras.optimizers.Adam(
-            learning_rate=self.learning_rate, beta_1=self.beta_1, beta_2=self.beta_2)
+            learning_rate=self.learning_rate,
+            beta_1=self.beta_1, beta_2=self.beta_2)
         self.discriminator.compile(
-            optimizer=self.discriminator.optimizer, loss=self.discriminator.loss)
+            optimizer=self.discriminator.optimizer,
+            loss=self.discriminator.loss)
 
     def get_fake_sample(self, size=None, training=False):
         if not size:
@@ -55,7 +58,8 @@ class WGAN_clip(keras.Model):
                 fake_output = self.discriminator(fake_samples, training=True)
                 discr_loss = self.discriminator.loss(real_output, fake_output)
 
-            grads = tape.gradient(discr_loss, self.discriminator.trainable_variables)
+            grads = tape.gradient(
+                discr_loss, self.discriminator.trainable_variables)
             self.discriminator.optimizer.apply_gradients(
                 zip(grads, self.discriminator.trainable_variables))
 
