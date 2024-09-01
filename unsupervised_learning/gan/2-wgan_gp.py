@@ -1,64 +1,71 @@
 #!/usr/bin/env python3
-""" Function that builds a GAN
-
-Requires:
-    - tensorflow
-"""
+import tensorflow as tf
 from tensorflow import keras
 
-layers, models = keras.layers, keras.models
+class WGAN_GP(keras.Model):
+    """ WGAN class that inherits from keras.Model """
+    def __init__(self, generator, discriminator, latent_generator, real_examples, batch_size=200, disc_iter=2, learning_rate=.005):
+        super().__init__()
+        self.latent_generator = latent_generator
+        self.real_examples = real_examples
+        self.generator = generator
+        self.discriminator = discriminator
+        self.batch_size = batch_size
+        self.disc_iter = disc_iter
 
+        self.learning_rate = learning_rate
+        self.beta_1 = .5
+        self.beta_2 = .9
 
-def convolutional_GenDiscr():
-    """ Builds a Convolutional GAN """
+        # Define the generator loss and optimizer
+        self.generator.loss = lambda x: -tf.math.reduce_mean(x)
+        self.generator.optimizer = keras.optimizers.Adam(learning_rate=self.learning_rate, beta_1=self.beta_1, beta_2=self.beta_2)
+        self.generator.compile(optimizer=self.generator.optimizer, loss=self.generator.loss)
 
-    def get_generator():
-        """ Builds the generator model """
-        input_layer = layers.Input(shape=(16,), name='input_1')
+        # Define the discriminator loss and optimizer
+        self.discriminator.loss = lambda x, y: tf.math.reduce_mean(y) - tf.math.reduce_mean(x)
+        self.discriminator.optimizer = keras.optimizers.Adam(learning_rate=self.learning_rate, beta_1=self.beta_1, beta_2=self.beta_2)
+        self.discriminator.compile(optimizer=self.discriminator.optimizer, loss=self.discriminator.loss)
 
-        x = layers.Dense(2048, name='dense')(input_layer)
-        x = layers.Reshape((2, 2, 512), name='reshape')(x)
+    def get_fake_sample(self, size=None, training=False):
+        """ Get a fake sample of size batch_size"""
+        if not size:
+            size = self.batch_size
+        return self.generator(self.latent_generator(size), training=training)
 
-        x = layers.UpSampling2D(name='up_sampling2d')(x)
-        x = layers.Conv2D(64, (3, 3), padding='same', name='conv2d')(x)
-        x = layers.BatchNormalization(name='batch_normalization')(x)
-        x = layers.Activation('relu', name='activation_1')(x)
+    def get_real_sample(self, size=None):
+        """ Get a real sample of size batch_size"""
+        if not size:
+            size = self.batch_size
+        sorted_indices = tf.range(tf.shape(self.real_examples)[0])
+        random_indices = tf.random.shuffle(sorted_indices)[:size]
+        return tf.gather(self.real_examples, random_indices)
 
-        x = layers.UpSampling2D(name='up_sampling2d_1')(x)
-        x = layers.Conv2D(16, (3, 3), padding='same', name='conv2d_1')(x)
-        x = layers.BatchNormalization(name='batch_normalization_1')(x)
-        x = layers.Activation('relu', name='activation_2')(x)
+    def train_step(self, useless_argument):
+        """ Overloading train_step()"""
+        # Train the discriminator
+        for _ in range(self.disc_iter):
+            with tf.GradientTape() as tape:
+                real_samples = self.get_real_sample()
+                fake_samples = self.get_fake_sample(training=True)
+                real_output = self.discriminator(real_samples, training=True)
+                fake_output = self.discriminator(fake_samples, training=True)
+                discr_loss = self.discriminator.loss(real_output, fake_output)
 
-        x = layers.UpSampling2D(name='up_sampling2d_2')(x)
-        x = layers.Conv2D(1, (3, 3), padding='same', name='conv2d_2')(x)
-        x = layers.BatchNormalization(name='batch_normalization_2')(x)
-        output_layer = layers.Activation('tanh', name='activation_3')(x)
+            grads = tape.gradient(discr_loss, self.discriminator.trainable_variables)
+            self.discriminator.optimizer.apply_gradients(zip(grads, self.discriminator.trainable_variables))
 
-        return models.Model(input_layer, output_layer, name='generator')
+            # Clip the discriminator's weights
+            for var in self.discriminator.trainable_variables:
+                var.assign(tf.clip_by_value(var, -1.0, 1.0))
 
-    def get_discriminator():
-        """ Builds the discriminator model """
-        inpt = layers.Input(shape=(16, 16, 1), name='input_2')
+        # Train the generator
+        with tf.GradientTape() as tape:
+            fake_samples = self.get_fake_sample(training=True)
+            fake_output = self.discriminator(fake_samples, training=True)
+            gen_loss = self.generator.loss(fake_output)
 
-        x = layers.Conv2D(32, (3, 3), padding='same', name='conv2d_3')(inpt)
-        x = layers.MaxPooling2D(name='max_pooling2d')(x)
-        x = layers.Activation('relu', name='activation_4')(x)
+        grads = tape.gradient(gen_loss, self.generator.trainable_variables)
+        self.generator.optimizer.apply_gradients(zip(grads, self.generator.trainable_variables))
 
-        x = layers.Conv2D(64, (3, 3), padding='same', name='conv2d_4')(x)
-        x = layers.MaxPooling2D(name='max_pooling2d_1')(x)
-        x = layers.Activation('relu', name='activation_5')(x)
-
-        x = layers.Conv2D(128, (3, 3), padding='same', name='conv2d_5')(x)
-        x = layers.MaxPooling2D(name='max_pooling2d_2')(x)
-        x = layers.Activation('relu', name='activation_6')(x)
-
-        x = layers.Conv2D(256, (3, 3), padding='same', name='conv2d_6')(x)
-        x = layers.MaxPooling2D(name='max_pooling2d_3')(x)
-        x = layers.Activation('relu', name='activation_7')(x)
-
-        x = layers.Flatten(name='flatten')(x)
-        output_layer = layers.Dense(1, name='dense_1')(x)
-
-        return models.Model(inpt, output_layer, name='discriminator')
-
-    return get_generator(), get_discriminator()
+        return {"discr_loss": discr_loss, "gen_loss": gen_loss}
