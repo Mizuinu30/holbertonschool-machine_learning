@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """This module contains a simple GAN class that inherits from keras.Model"""
+
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
