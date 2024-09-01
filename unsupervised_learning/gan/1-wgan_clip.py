@@ -1,5 +1,8 @@
+#!/usr/bin/env python3
+""" This module contains the WGAN class that inherits from keras.Model """
 import tensorflow as tf
 from tensorflow import keras
+
 
 class WGAN_clip(keras.Model):
 
@@ -37,11 +40,13 @@ class WGAN_clip(keras.Model):
             loss=self.discriminator.loss)
 
     def get_fake_sample(self, size=None, training=False):
+        """ Get a fake sample of size batch_size"""
         if not size:
             size = self.batch_size
         return self.generator(self.latent_generator(size), training=training)
 
     def get_real_sample(self, size=None):
+        """ Get a real sample of size batch_size"""
         if not size:
             size = self.batch_size
         sorted_indices = tf.range(tf.shape(self.real_examples)[0])
@@ -49,6 +54,7 @@ class WGAN_clip(keras.Model):
         return tf.gather(self.real_examples, random_indices)
 
     def train_step(self, useless_argument):
+        """ Overloading train_step()"""
         # Train the discriminator
         for _ in range(self.disc_iter):
             with tf.GradientTape() as tape:
