@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """ Bag of words model """
 
 from sklearn.feature_extraction.text import CountVectorizer
