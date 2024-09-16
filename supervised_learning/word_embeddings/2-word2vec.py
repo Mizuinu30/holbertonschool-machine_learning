@@ -13,20 +13,18 @@ def word2vec_model(sentences, vector_size=100, min_count=5, window=5,
     Creates, builds, and trains a gensim Word2Vec model.
 
     Parameters:
-    - sentences: list of sentences to be trained on
-    - vector_size: dimensionality of the embedding layer
-    - min_count: minimum number of occurrences of a word for use in training
-    - window: maximum distance between
-    the current and predicted word within a sentence
-    - negative: size of negative sampling
-    - cbow: boolean to determine
-    the training type; True is for CBOW; False is for Skip-gram
-    - epochs: number of iterations to train over
-    - seed: seed for the random number generator
-    - workers: number of worker threads to train the model
+    sentences (list): List of sentences to be trained on.
+    vector_size (int): Dimensionality of the embedding layer.
+    min_count (int): Minimum number of occurrences of a word for use in training.
+    window (int): Maximum distance between the current and predicted word within a sentence.
+    negative (int): Size of negative sampling.
+    cbow (bool): Boolean to determine the training type; True is for CBOW; False is for Skip-gram.
+    epochs (int): Number of iterations to train over.
+    seed (int): Seed for the random number generator.
+    workers (int): Number of worker threads to train the model.
 
     Returns:
-    - The trained Word2Vec model
+    gensim.models.Word2Vec: The trained Word2Vec model.
     """
 
     sg = 0 if cbow else 1  # 0 for CBOW, 1 for Skip-gram
