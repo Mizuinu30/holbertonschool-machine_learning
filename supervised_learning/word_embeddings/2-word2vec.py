@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-This module provides a function to create, build, and train a gensim Word2Vec model.
+This module provides a function to create,
+build, and train a gensim Word2Vec model.
 
 Functions:
     word2vec_model(sentences, vector_size=100, min_count=5, window=5,
