@@ -1,35 +1,42 @@
 #!/usr/bin/env python3
 """
-Train Word2Vec
-
-creates and trains a gensim word2vec model
+This module contains a function to create, build, and train a gensim Word2Vec model.
 """
+
 from gensim.models import Word2Vec
 
-
-def word2vec_model(sentences, vector_size=100, min_count=5, window=5,
-                   negative=5, cbow=True, iterations=5, seed=0, workers=1):
+def word2vec_model(sentences, vector_size=100, min_count=5, window=5, negative=5, cbow=True, epochs=5, seed=0, workers=1):
     """
-    ARGS:
-        *sentences: {list} : sentences to be trained on
-        *vector_size :dimensionality of embedding layer
-        *min_count: minimum number of occurrences of a word
-        *window:  maximum distance between the current and
-                  predicted word within a sentence
-        *negative : size of negative sampling
-        *cbow: {boolean} :training type; True  CBOW; False  Skip-gram
-        *iterations: number of iterations to train over
-        *seed: seed for the random number generator
-        workers: number of worker threads to train the model
-    Returns: the trained model
-    """
-    w2v_model = Word2Vec(vector_size=vector_size, min_count=min_count, window=window,
-                         negative=negative, sg=cbow,
-                         seed=seed, workers=workers)
-    # Building the Vocabulary Table
-    w2v_model.build_vocab(sentences)
-    # Training of the model
-    w2v_model.train(sentences, total_examples=w2v_model.corpus_count,
-                    epochs=iterations)
+    Creates, builds, and trains a gensim Word2Vec model.
 
-    return w2v_model
+    Parameters:
+    - sentences: list of sentences to be trained on
+    - vector_size: dimensionality of the embedding layer
+    - min_count: minimum number of occurrences of a word for use in training
+    - window: maximum distance between the current and predicted word within a sentence
+    - negative: size of negative sampling
+    - cbow: boolean to determine the training type; True is for CBOW; False is for Skip-gram
+    - epochs: number of iterations to train over
+    - seed: seed for the random number generator
+    - workers: number of worker threads to train the model
+
+    Returns:
+    - The trained Word2Vec model
+    """
+
+    sg = 0 if cbow else 1  # 0 for CBOW, 1 for Skip-gram
+
+    model = Word2Vec(
+        sentences=sentences,
+        vector_size=vector_size,
+        min_count=min_count,
+        window=window,
+        negative=negative,
+        sg=sg,
+        seed=seed,
+        workers=workers
+    )
+
+    model.train(sentences, total_examples=len(sentences), epochs=epochs)
+
+    return model
