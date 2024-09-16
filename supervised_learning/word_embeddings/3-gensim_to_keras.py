@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
-This module contains a function to convert a gensim Word2Vec model to a Keras Embedding layer.
+This module contains a function to convert
+a gensim Word2Vec model to a Keras Embedding layer.
 """
 
 import tensorflow as tf
+
 
 def gensim_to_keras(model):
     """
