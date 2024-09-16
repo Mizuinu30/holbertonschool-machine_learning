@@ -9,8 +9,8 @@ from gensim.models import Word2Vec
 
 def word2vec_model(
     sentences, vector_size=100,
-        min_count=5, window=5, negative=5,
-            cbow=True, epochs=5, seed=0, workers=1):
+    min_count=5, window=5, negative=5,
+    cbow=True, epochs=5, seed=0, workers=1):
     """
     Creates, builds, and trains a gensim Word2Vec model.
 
@@ -46,6 +46,8 @@ def word2vec_model(
     )
 
     model.build_vocab(sentences)
+    """ Train the model """
     model.train(sentences, total_examples=model.corpus_count, epochs=epochs)
+    """ Save the model """
 
     return model
