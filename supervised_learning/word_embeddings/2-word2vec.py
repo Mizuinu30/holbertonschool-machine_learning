@@ -7,12 +7,12 @@ creates and trains a gensim word2vec model
 from gensim.models import Word2Vec
 
 
-def word2vec_model(sentences, size=100, min_count=5, window=5,
+def word2vec_model(sentences, vector_size=100, min_count=5, window=5,
                    negative=5, cbow=True, iterations=5, seed=0, workers=1):
     """
     ARGS:
         *sentences: {list} : sentences to be trained on
-        *size :dimensionality of embedding layer
+        *vector_size :dimensionality of embedding layer
         *min_count: minimum number of occurrences of a word
         *window:  maximum distance between the current and
                   predicted word within a sentence
@@ -23,7 +23,7 @@ def word2vec_model(sentences, size=100, min_count=5, window=5,
         workers: number of worker threads to train the model
     Returns: the trained model
     """
-    w2v_model = Word2Vec(size=size, min_count=min_count, window=window,
+    w2v_model = Word2Vec(vector_size=vector_size, min_count=min_count, window=window,
                          negative=negative, sg=cbow,
                          seed=seed, workers=workers)
     # Building the Vocabulary Table
