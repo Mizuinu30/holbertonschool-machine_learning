@@ -1,42 +1,52 @@
 #!/usr/bin/env python3
-"""
-This module contains a function to create, build, and train a gensim FastText model.
-"""
+"""This module creates a fasttext model"""
+import gensim
 
-from gensim.models import FastText
 
-def fasttext_model(sentences, vector_size=100, min_count=5, negative=5, window=5, cbow=True, epochs=5, seed=0, workers=1):
-    """
-    Creates, builds, and trains a gensim FastText model.
-
-    Parameters:
-    - sentences: list of sentences to be trained on
-    - vector_size: dimensionality of the embedding layer
-    - min_count: minimum number of occurrences of a word for use in training
-    - window: maximum distance between the current and predicted word within a sentence
-    - negative: size of negative sampling
-    - cbow: boolean to determine the training type; True is for CBOW; False is for Skip-gram
-    - epochs: number of iterations to train over
-    - seed: seed for the random number generator
-    - workers: number of worker threads to train the model
-
+def fasttext_model(
+    sentences,
+    vector_size=100,
+    min_count=5,
+    negative=5,
+    window=5,
+    cbow=True,
+    epochs=5,
+    seed=0,
+    workers=1,
+):
+    """This function creates builds and trains a fasttext model
+    Args:
+        sentences is a list of sentences to be trained on
+        vector_size is the dimensionality of the embedding layer
+        min_count is the minimum number of occurrences of a word
+        for use in training
+        window is the maximum distance between the current and
+        predicted word within a sentence
+        negative is the size of negative sampling
+        cbow is a boolean to determine the training type; True is
+        for CBOW; False is for Skip-gram
+        epochs is the number of iterations to train over
+        seed is the seed for the random number generator
+        workers is the number of worker threads to train the model
     Returns:
-    - The trained FastText model
+        the trained model
     """
-
-    sg = 0 if cbow else 1  # 0 for CBOW, 1 for Skip-gram
-
-    model = FastText(
-        sentences=sentences,
+    # create the fasttext model
+    model = gensim.models.FastText(
+        sentences,
         vector_size=vector_size,
-        min_count=min_count,
         window=window,
+        min_count=min_count,
         negative=negative,
-        sg=sg,
+        sg=0 if cbow else 1,
         seed=seed,
-        workers=workers
+        workers=workers,
+        epochs=epochs,
     )
-
-    model.train(sentences, total_examples=len(sentences), epochs=epochs)
+    # build the vocabulary
+    model.build_vocab(sentences)
+    # train the model
+    model.train(sentences, total_examples=model.corpus_count,
+                epochs=model.epochs)
 
     return model
