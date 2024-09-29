@@ -50,7 +50,7 @@ class Encoder(tf.keras.layers.Layer):
                 "hidden must be an int representing hidden units")
         if not isinstance(input_vocab, int):
             raise TypeError(
-                "input_vocab must be an int representing  input vocabulary size")
+                "input_vocab must be an int representing input vocab size")
         if not isinstance(max_seq_len, int):
             raise TypeError(
                 "max_seq_len must be an int representing  max sequence length")
