@@ -36,27 +36,36 @@ class Encoder(tf.keras.layers.Layer):
                  self, N, dm, h, hidden, input_vocab, max_seq_len, drop_rate=0.1):
         """Initializes the Encoder."""
         if not isinstance(N, int):
-            raise TypeError("N must be an integer representing the number of blocks.")
+            raise TypeError(
+                "N must be an integer representing the number of blocks.")
         if not isinstance(dm, int):
-            raise TypeError("dm must be an integer representing the model dimensionality.")
+            raise TypeError(
+                "dm must be an integer representing the model dimensionality.")
         if not isinstance(h, int):
-            raise TypeError("h must be an integer representing the number of heads.")
+            raise TypeError(
+                "h must be an integer representing the number of heads.")
         if not isinstance(hidden, int):
-            raise TypeError("hidden must be an integer representing hidden units.")
+            raise TypeError(
+                "hidden must be an integer representing hidden units.")
         if not isinstance(input_vocab, int):
-            raise TypeError("input_vocab must be an integer representing the input vocabulary size.")
+            raise TypeError(
+                "input_vocab must be an integer representing the input vocabulary size.")
         if not isinstance(max_seq_len, int):
-            raise TypeError("max_seq_len must be an integer representing the max sequence length.")
+            raise TypeError(
+                "max_seq_len must be an integer representing the max sequence length.")
         if not isinstance(drop_rate, float):
-            raise TypeError("drop_rate must be a float representing the dropout rate.")
+            raise TypeError(
+                "drop_rate must be a float representing the dropout rate.")
 
         super(Encoder, self).__init__()
 
         self.N = N
         self.dm = dm
-        self.embedding = tf.keras.layers.Embedding(input_dim=input_vocab, output_dim=dm)
+        self.embedding = tf.keras.layers.Embedding(
+            input_dim=input_vocab, output_dim=dm)
         self.positional_encoding = positional_encoding(max_seq_len, dm)
-        self.blocks = [EncoderBlock(dm, h, hidden, drop_rate) for _ in range(N)]
+        self.blocks = [EncoderBlock(dm, h, hidden, drop_rate) for _ in range(
+            N)]
         self.dropout = tf.keras.layers.Dropout(drop_rate)
 
     def call(self, x, training, mask):
@@ -65,7 +74,8 @@ class Encoder(tf.keras.layers.Layer):
 
         Args:
             x (tensor): Input tensor of shape (batch, input_seq_len, dm).
-            training (bool): Boolean indicating if the model is in training mode.
+            training (bool): Boolean indicating if the model
+            is in training mode.
             mask: Mask to be applied for multi-head attention.
 
         Returns:
