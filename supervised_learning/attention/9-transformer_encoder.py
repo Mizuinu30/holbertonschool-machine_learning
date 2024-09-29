@@ -26,12 +26,14 @@ class Encoder(tf.keras.layers.Layer):
         N (int): The number of blocks in the encoder.
         dm (int): The dimensionality of the model.
         embedding (Layer): The embedding layer for the inputs.
-        positional_encoding (ndarray): Positional encodings of shape (max_seq_len, dm).
+        positional_encoding (ndarray):
+        Positional encodings of shape (max_seq_len, dm).
         blocks (list): List of length N containing EncoderBlocks.
         dropout (Layer): Dropout layer applied to positional encodings.
     """
 
-    def __init__(self, N, dm, h, hidden, input_vocab, max_seq_len, drop_rate=0.1):
+    def __init__(
+                 self, N, dm, h, hidden, input_vocab, max_seq_len, drop_rate=0.1):
         """Initializes the Encoder."""
         if not isinstance(N, int):
             raise TypeError("N must be an integer representing the number of blocks.")
