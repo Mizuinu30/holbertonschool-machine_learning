@@ -33,26 +33,27 @@ class Encoder(tf.keras.layers.Layer):
     """
 
     def __init__(
-                 self, N, dm, h, hidden, input_vocab, max_seq_len, drop_rate=0.1):
+                 self, N, dm, h, hidden, input_vocab,
+                 max_seq_len, drop_rate=0.1):
         """Initializes the Encoder."""
         if not isinstance(N, int):
             raise TypeError(
-                "N must be an integer representing the number of blocks")
+                "N must be an int representing the number of blocks")
         if not isinstance(dm, int):
             raise TypeError(
-                "dm must be an integer representing the model dimensionality")
+                "dm must be an int representing the model dimensionality")
         if not isinstance(h, int):
             raise TypeError(
-                "h must be an integer representing the number of heads")
+                "h must be an int representing the number of heads")
         if not isinstance(hidden, int):
             raise TypeError(
-                "hidden must be an integer representing hidden units")
+                "hidden must be an int representing hidden units")
         if not isinstance(input_vocab, int):
             raise TypeError(
-                "input_vocab must be an integer representing the input vocabulary size")
+                "input_vocab must be an int representing the input vocabulary size")
         if not isinstance(max_seq_len, int):
             raise TypeError(
-                "max_seq_len must be an integer representing the max sequence length")
+                "max_seq_len must be an int representing the max sequence length")
         if not isinstance(drop_rate, float):
             raise TypeError(
                 "drop_rate must be a float representing the dropout rate")
