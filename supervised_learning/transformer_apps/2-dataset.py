@@ -76,8 +76,10 @@ class Dataset:
         en_tokens = self.tokenizer_en.encode(en.numpy().decode('utf-8'))
 
         # Add the start token (vocab_size) and end token (vocab_size + 1)
-        pt_tokens = [self.tokenizer_pt.vocab_size] + pt_tokens + [self.tokenizer_pt.vocab_size + 1]
-        en_tokens = [self.tokenizer_en.vocab_size] + en_tokens + [self.tokenizer_en.vocab_size + 1]
+        pt_tokens = [self.tokenizer_pt.vocab_size] + pt_tokens + [
+            self.tokenizer_pt.vocab_size + 1]
+        en_tokens = [self.tokenizer_en.vocab_size] + en_tokens + [
+            self.tokenizer_en.vocab_size + 1]
 
         return pt_tokens, en_tokens
 
@@ -90,11 +92,13 @@ class Dataset:
             en: A tf.Tensor containing the corresponding English sentence.
 
         Returns:
-            pt_tensor: A tf.Tensor containing the tokenized Portuguese sentence.
+            pt_tensor: A tf.Tensor containing
+            the tokenized Portuguese sentence.
             en_tensor: A tf.Tensor containing the tokenized English sentence.
         """
         # Wrap the encode method with tf.py_function
-        pt_tokens, en_tokens = tf.py_function(self.encode, [pt, en], [tf.int64, tf.int64])
+        pt_tokens, en_tokens = tf.py_function(
+            self.encode, [pt, en], [tf.int64, tf.int64])
 
         # Set the shape of the return tensors
         pt_tokens.set_shape([None])
