@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 """ Class Dataset """
 
-
 import tensorflow_datasets as tfds
-import tensorflow as tf
-from tokenizers import BertWordPieceTokenizer
+from transformers import BertTokenizer
 
 
 class Dataset:
@@ -46,14 +44,7 @@ class Dataset:
             tokenizer_en: the English tokenizer
         """
         # Initialize the tokenizers
-        tokenizer_pt = BertWordPieceTokenizer("neuralmind/bert-base-portuguese-cased-vocab.txt", lowercase=False)
-        tokenizer_en = BertWordPieceTokenizer("bert-base-uncased-vocab.txt", lowercase=True)
-
-        # Train the tokenizers with a maximum vocabulary size of 2**13
-        pt_sentences = [pt.numpy().decode('utf-8') for pt, en in data]
-        en_sentences = [en.numpy().decode('utf-8') for pt, en in data]
-
-        tokenizer_pt.train_from_iterator(pt_sentences, vocab_size=2**13)
-        tokenizer_en.train_from_iterator(en_sentences, vocab_size=2**13)
+        tokenizer_pt = BertTokenizer.from_pretrained("neuralmind/bert-base-portuguese-cased")
+        tokenizer_en = BertTokenizer.from_pretrained("bert-base-uncased")
 
         return tokenizer_pt, tokenizer_en
