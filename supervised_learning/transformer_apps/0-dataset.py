@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """Class Dataset"""
-
 import tensorflow_datasets as tfds
-from transformers import AutoTokenizer
+import transformers
 
 
 class Dataset:
@@ -28,8 +27,8 @@ class Dataset:
             tokenizer_en: The English tokenizer.
         """
         # Load pre-trained tokenizers
-        tokenizer_pt = AutoTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased')
-        tokenizer_en = AutoTokenizer.from_pretrained('bert-base-uncased')
+        tokenizer_pt = transformers.AutoTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased')
+        tokenizer_en = transformers.AutoTokenizer.from_pretrained('bert-base-uncased')
 
         # Define iterators for the Portuguese and English sentences
         def pt_iterator():
