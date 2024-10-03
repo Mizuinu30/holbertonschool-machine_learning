@@ -1,6 +1,11 @@
+#!/usr/bin/env python3
+""" Class Dataset """
+
+
 import tensorflow_datasets as tfds
 import tensorflow as tf
 from tokenizers import BertWordPieceTokenizer
+
 
 class Dataset:
     def __init__(self):
