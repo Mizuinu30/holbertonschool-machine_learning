@@ -22,31 +22,40 @@ class Dataset:
                                     split='validation', as_supervised=True)
 
         # Tokenize the datasets
-        self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(self.data_train)
+        self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(
+            self.data_train)
 
         # Set up the data pipeline for the training dataset
         self.data_train = self.data_train.map(self.tf_encode) \
-                                         .filter(lambda pt, en: tf.logical_and(tf.size(pt) <= max_len,
-                                                                               tf.size(en) <= max_len)) \
+                                         .filter(lambda pt, en: tf.logical_and(
+                                             tf.size(pt) <= max_len,
+                                             tf.size(en) <= max_len)) \
                                          .cache() \
                                          .shuffle(20000) \
                                          .padded_batch(batch_size,
-                                                       padded_shapes=([None], [None])) \
-                                         .prefetch(tf.data.experimental.AUTOTUNE)
+                                                       padded_shapes=(
+                                                           [None], [None])) \
+                                         .prefetch(
+                                             tf.data.experimental.AUTOTUNE)
 
         # Set up the data pipeline for the validation dataset
         self.data_valid = self.data_valid.map(self.tf_encode) \
-                                         .filter(lambda pt, en: tf.logical_and(tf.size(pt) <= max_len,
-                                                                               tf.size(en) <= max_len)) \
-                                         .padded_batch(batch_size,
-                                                       padded_shapes=([None], [None]))
+                                         .filter(
+                                             lambda pt, en: tf.logical_and(
+                                                 tf.size(
+                                                     pt) <= max_len, tf.size(
+                                                         en) <= max_len)) \
+                                         .padded_batch(
+                                             batch_size, padded_shapes=(
+                                                 [None], [None]))
 
     def tokenize_dataset(self, data):
         """
         Creates sub-word tokenizers for the dataset using pre-trained models.
 
         Args:
-            data: A tf.data.Dataset whose examples are formatted as a tuple (pt, en).
+            data: A tf.data.Dataset whose examples
+            are formatted as a tuple (pt, en).
 
         Returns:
             tokenizer_pt: The Portuguese tokenizer.
@@ -92,8 +101,10 @@ class Dataset:
         en_tokens = self.tokenizer_en.encode(en.numpy().decode('utf-8'))
 
         # Add the start token (vocab_size) and end token (vocab_size + 1)
-        pt_tokens = [self.tokenizer_pt.vocab_size] + pt_tokens + [self.tokenizer_pt.vocab_size + 1]
-        en_tokens = [self.tokenizer_en.vocab_size] + en_tokens + [self.tokenizer_en.vocab_size + 1]
+        pt_tokens = [self.tokenizer_pt.vocab_size] + pt_tokens + [
+            self.tokenizer_pt.vocab_size + 1]
+        en_tokens = [self.tokenizer_en.vocab_size] + en_tokens + [
+            self.tokenizer_en.vocab_size + 1]
 
         return pt_tokens, en_tokens
 
@@ -106,11 +117,13 @@ class Dataset:
             en: A tf.Tensor containing the corresponding English sentence.
 
         Returns:
-            pt_tensor: A tf.Tensor containing the tokenized Portuguese sentence.
+            pt_tensor: A tf.Tensor containing the
+            tokenized Portuguese sentence.
             en_tensor: A tf.Tensor containing the tokenized English sentence.
         """
         # Wrap the encode method with tf.py_function
-        pt_tokens, en_tokens = tf.py_function(self.encode, [pt, en], [tf.int64, tf.int64])
+        pt_tokens, en_tokens = tf.py_function(
+            self.encode, [pt, en], [tf.int64, tf.int64])
 
         # Set the shape of the return tensors
         pt_tokens.set_shape([None])
