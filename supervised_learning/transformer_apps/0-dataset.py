@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Class Dataset"""
 
-import tensorflow as tf
 import tensorflow_datasets as tfds
 
 
