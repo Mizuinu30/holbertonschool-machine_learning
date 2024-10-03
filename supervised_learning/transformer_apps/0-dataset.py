@@ -5,7 +5,7 @@ import transformers
 
 
 class Dataset:
-    """ Dataset class for machine translation. """
+    """ Class Dataset that loads and preps a dataset. """
     def __init__(self):
         """Initializes the Dataset class by
         loading and preparing the dataset."""
@@ -38,12 +38,12 @@ class Dataset:
 
         # Define iterators for the Portuguese and English sentences
         def pt_iterator():
-            """ Yields sentences from the Portuguese dataset. """
+            """ Iterates over the Portuguese sentences. """
             for pt, _ in data:
                 yield pt.numpy().decode('utf-8')
 
         def en_iterator():
-            """" Yields sentences from the English dataset. """
+            """ Iterates over the English sentences. """
             for _, en in data:
                 yield en.numpy().decode('utf-8')
 
@@ -54,4 +54,3 @@ class Dataset:
             en_iterator(), 2**13)
 
         return tokenizer_pt, tokenizer_en
-
