@@ -4,45 +4,54 @@ Defines function that finds a snippet of text within a reference document
 to answer a question
 """
 
+
+import tensorflow as tf
 import tensorflow_hub as hub
 from transformers import BertTokenizer
-import numpy as np
-import tensorflow as tf
 
 
 def question_answer(question, reference):
-    # Load pre-trained BERT tokenizer from transformers
-    tokenizer = BertTokenizer.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad')
+    """
+    Finds a snippet of text within a reference document to answer a question
 
-    # Load the BERT QA model from TensorFlow Hub
+    parameters:
+        question [string]:
+            contains the question to answer
+        reference [string]:
+            contains the reference document from which to find the answer
+
+    returns:
+        [string]:
+            contains the answer
+        or None if no answer is found
+    """
+    tokenizer = BertTokenizer.from_pretrained(
+        'bert-large-uncased-whole-word-masking-finetuned-squad')
     model = hub.load("https://tfhub.dev/see--/bert-uncased-tf2-qa/1")
 
-    # Tokenize input question and reference text (context)
-    input_dict = tokenizer(question, reference, return_tensors='tf')
+    quest_tokens = tokenizer.tokenize(question)
+    refer_tokens = tokenizer.tokenize(reference)
 
-    # The model expects specific keys in the dictionary, so rename them
-    input_dict = {
-        'input_ids': input_dict['input_ids'],
-        'input_mask': input_dict['attention_mask'],
-        'segment_ids': input_dict['token_type_ids']
-    }
+    tokens = ['[CLS]'] + quest_tokens + ['[SEP]'] + refer_tokens + ['[SEP]']
 
-    # Get the output of the model (logits for start and end positions of the answer)
-    outputs = model(input_dict)
-    start_logits, end_logits = outputs[0], outputs[1]
+    input_word_ids = tokenizer.convert_tokens_to_ids(tokens)
+    input_mask = [1] * len(input_word_ids)
+    input_type_ids = [0] * (
+        1 + len(quest_tokens) + 1) + [1] * (len(refer_tokens) + 1)
 
-    # Get the most probable start and end positions
-    start_idx = tf.argmax(start_logits, axis=1).numpy()[0]
-    end_idx = tf.argmax(end_logits, axis=1).numpy()[0]
+    input_word_ids, input_mask, input_type_ids = map(
+        lambda t: tf.expand_dims(
+            tf.convert_to_tensor(t, dtype=tf.int32), 0),
+        (input_word_ids, input_mask, input_type_ids))
 
-    # Convert the input IDs back to tokens, and then to the original text
-    tokens = tokenizer.convert_ids_to_tokens(input_dict['input_ids'][0].numpy())
+    outputs = model([input_word_ids, input_mask, input_type_ids])
 
-    # Reconstruct the answer from the tokens between start and end
-    answer = tokenizer.convert_tokens_to_string(tokens[start_idx:end_idx + 1])
+    short_start = tf.argmax(outputs[0][0][1:]) + 1
+    short_end = tf.argmax(outputs[1][0][1:]) + 1
+    answer_tokens = tokens[short_start: short_end + 1]
+    answer = tokenizer.convert_tokens_to_string(answer_tokens)
 
-    # If no valid answer is found, return None
-    if start_idx == 0 and end_idx == 0:
+    if answer is None or answer is "" or question in answer:
         return None
 
     return answer
