@@ -1,13 +1,34 @@
 #!/usr/bin/env python3
 """
-Defines function that finds a snippet of text within a reference document
-to answer a question
+Defines function that answers questions from reference text on loop
 """
 
 
 import tensorflow as tf
 import tensorflow_hub as hub
 from transformers import BertTokenizer
+
+
+def answer_loop(reference):
+    """
+    Answers questions from a reference text on loop (based on 1-loop.py)
+
+    parameters:
+        reference [string]:
+            the reference document from which to find the answer
+    """
+    while (1):
+        user_input = input("Q: ")
+        user_input = user_input.lower()
+        if user_input == 'exit' or user_input == 'quit' \
+           or user_input == 'goodbye' or user_input == 'bye':
+            print("A: Goodbye")
+            break
+        answer = question_answer(user_input, reference)
+        if answer is None:
+            print("A: Sorry, I do not understand your question.")
+        else:
+            print("A: ", answer)
 
 
 def question_answer(question, reference):
