@@ -7,10 +7,9 @@ from OpenAI's gym
 
 import gymnasium as gym
 
-def load_frozen_lake(desc=None, map_name=None, is_slippery=False):
-    """
-    Loads pre-made FrozenLakeEnv environment from OpenAI's gym
 
+def load_frozen_lake(desc=None, map_name=None, is_slippery=False):
+    """ Loads pre-made FrozenLakeEnv environment from OpenAI's gym
     returns:
         the environment
     """
