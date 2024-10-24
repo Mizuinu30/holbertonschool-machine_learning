@@ -1,55 +1,65 @@
 #!/usr/bin/env python3
 """
-Defines function that performs Q-learning
+Q-learning algorithm for training on the FrozenLake environment
 """
 
-
-
 import numpy as np
+import gymnasium as gym
 
 
-def train(env, Q, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99,
-          epsilon=1, min_epsilon=0.1, epsilon_decay=0.05):
+def epsilon_greedy(Q, state, epsilon):
     """
-    Performs Q-learning
+    Selects an action using the epsilon-greedy policy
+    """
+    if np.random.rand() < epsilon:
+        return np.random.randint(Q.shape[1])
+    else:
+        return np.argmax(Q[state])
 
-    returns:
-        Q, total_rewards
+
+def train(
+    env,
+    Q,
+    episodes=1000,
+    max_steps=100,
+    alpha=0.1,
+    gamma=0.99,
+    epsilon=1.0,
+    min_epsilon=0.01,
+    epsilon_decay=0.995,
+):
+    """
+    Trains the Q-learning algorithm on the given environment
+
+    Args:
+        env: the FrozenLakeEnv instance
+        Q: a numpy.ndarray containing the Q-table
+        episodes: the total number of episodes to train over
+        max_steps: the maximum number of steps per episode
+        alpha: the learning rate
+        gamma: the discount rate
+        epsilon: the initial threshold for epsilon greedy
+        min_epsilon: the minimum value that epsilon should decay to
+        epsilon_decay: the decay rate for updating epsilon between episodes
+    Returns:
+        Q: the updated Q-table
+        total_rewards: a list containing the rewards per episode
     """
     total_rewards = []
-    max_epsilon = epsilon
     for episode in range(episodes):
-        current_state = env.reset()
+        state, _ = env.reset()
         done = False
-
-        total_episode_reward = 0
-
+        rewards_current_episode = 0
         for step in range(max_steps):
-            p = np.random.uniform(0, 1)
-            if p < epsilon:
-                # exploring
-                action = np.random.randint(Q.shape[1])
-            else:
-                # exploiting
-                action = np.argmax(Q[current_state, :])
-
-            next_state, reward, done, _ = env.step(action)
-
-            if done and reward == 0:
-                reward = -1
-
-            Q[current_state, action] = (
-                Q[current_state, action] * (1 - alpha) + alpha * (
-                    reward + gamma * np.max(Q[next_state, :])))
-            total_episode_reward += reward
-
+            action = epsilon_greedy(Q, state, epsilon)
+            new_state, reward, done, _, info = env.step(action)
+            Q[state, action] = Q[state, action] + alpha * (
+                reward + gamma * np.max(Q[new_state]) - Q[state, action]
+            )
+            state = new_state
+            rewards_current_episode += reward
             if done:
                 break
-
-            current_state = next_state
-
-        epsilon = (min_epsilon + (max_epsilon - min_epsilon) *
-                   np.exp(-epsilon_decay * episode))
-        total_rewards.append(total_episode_reward)
-
+        epsilon = max(min_epsilon, epsilon * epsilon_decay)
+        total_rewards.append(rewards_current_episode)
     return Q, total_rewards
