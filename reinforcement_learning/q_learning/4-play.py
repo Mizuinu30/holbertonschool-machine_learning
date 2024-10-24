@@ -13,14 +13,17 @@ def play(env, Q, max_steps=100):
     returns:
         total rewards for the episode
     """
-    current_state = env.reset()
+    state, _ = env.reset()
     done = False
-    env.render()
+    total_reward = 0
+    rendered_outputs = []
+    rendered_outputs.append(env.render())
     for step in range(max_steps):
-        action = np.argmax(Q[current_state, :])
-        next_state, reward, done, _ = env.step(action)
-        env.render()
-        if done:
+        action = np.argmax(Q[state, :])
+        new_state, reward, done, truncated, _ = env.step(action)
+        rendered_outputs.append(env.render())
+        state = new_state
+        total_reward += reward
+        if done or truncated:
             break
-        current_state = next_state
-    return reward
+    return total_reward, rendered_outputs
