@@ -1,48 +1,55 @@
 #!/usr/bin/env python3
-""" This module contains the epsilon_greedy function """
+"""
+Defines function that performs Q-learning
+"""
+
+
+
 import numpy as np
 
 
-def epsilon_greedy(Q, state, epsilon):
-    """ returns the action with the highest Q-value """
+def train(env, Q, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99,
+          epsilon=1, min_epsilon=0.1, epsilon_decay=0.05):
+    """
+    Performs Q-learning
 
-    if np.random.uniform(0, 1) < epsilon:
-        # Explore
-        action = np.random.randint(Q.shape[1])
-    else:
-        # Exploit
-        action = np.argmax(Q[state])
-
-    return action
-
-def train(
-    env,
-    Q,
-    episodes=1000,
-    max_steps=100,
-    alpha=0.1,
-    gamma=0.99,
-    epsilon=1.0,
-    min_epsilon=0.01,
-    epsilon_decay=0.995,
-):
-    """ Trains a Q-table using the Q-learning algorithm. """
-
+    returns:
+        Q, total_rewards
+    """
     total_rewards = []
+    max_epsilon = epsilon
     for episode in range(episodes):
-        state, _ = env.reset()
+        current_state = env.reset()
         done = False
-        rewards_current_episode = 0
+
+        total_episode_reward = 0
+
         for step in range(max_steps):
-            action = epsilon_greedy(Q, state, epsilon)
-            new_state, reward, done, _, info = env.step(action)
-            Q[state, action] = Q[state, action] + alpha * (
-                reward + gamma * np.max(Q[new_state]) - Q[state, action]
-            )
-            state = new_state
-            rewards_current_episode += reward
+            p = np.random.uniform(0, 1)
+            if p < epsilon:
+                # exploring
+                action = np.random.randint(Q.shape[1])
+            else:
+                # exploiting
+                action = np.argmax(Q[current_state, :])
+
+            next_state, reward, done, _ = env.step(action)
+
+            if done and reward == 0:
+                reward = -1
+
+            Q[current_state, action] = (
+                Q[current_state, action] * (1 - alpha) + alpha * (
+                    reward + gamma * np.max(Q[next_state, :])))
+            total_episode_reward += reward
+
             if done:
                 break
-        epsilon = max(min_epsilon, epsilon * epsilon_decay)
-        total_rewards.append(rewards_current_episode)
+
+            current_state = next_state
+
+        epsilon = (min_epsilon + (max_epsilon - min_epsilon) *
+                   np.exp(-epsilon_decay * episode))
+        total_rewards.append(total_episode_reward)
+
     return Q, total_rewards
