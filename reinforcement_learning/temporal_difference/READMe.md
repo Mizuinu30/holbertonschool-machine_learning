@@ -9,4 +9,4 @@ This directory contains work with temporal difference:
 2. [SARSA(λ)](/reinforcement_learning/0x02-temporal_difference/2-sarsa_lambtha.py)
 * Write a funtion that performs the SARSA(λ) algorithm.
 
-Juan Silva
+-Juan Silva
