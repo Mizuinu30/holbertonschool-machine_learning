@@ -1,68 +1,79 @@
 #!/usr/bin/env python3
-""" Contains the monte_carlo_with_eligibility_traces function """
+"""
+Defines function to perform the Monte Carlo algorithm
+"""
 
 
 import numpy as np
 
 
-def monte_carlo_with_eligibility_traces(env, V, policy, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99, lambtha=0.9):
+def generate_episode(env, policy, max_steps):
     """
-    Monte Carlo algorithm with eligibility traces for value estimation.
+    Generates an episode using policy
 
-    Args:
-        env: The environment instance, assumed to follow OpenAI's gym interface.
-        V: numpy.ndarray of shape (s,), the current estimate of the state-value function,
-           where s is the number of states in the environment.
-        policy: A function that takes a state as input and returns the next action to take.
-        episodes: int, the total number of episodes to train over (default is 5000).
-        max_steps: int, the maximum number of steps allowed per episode (default is 100).
-        alpha: float, the learning rate for updating the value estimates (default is 0.1).
-        gamma: float, the discount factor, which determines the importance of future rewards (default is 0.99).
-        lambtha: float, the decay rate of eligibility traces (default is 0.9).
+    parameters:
+        env: the openAI environment instance
+        policy: function that takes in state & returns the next action to take
+        max_steps: the maximum number of steps per episode
 
-    Returns:
-        numpy.ndarray: The updated state-value function V after training.
+    returns:
+        returns the episode
     """
-    # Loop through each episode
+    # episode = [[state], [rewards]]
+    episode = [[], []]
+    # the first state comes from resetting the environment
+    state = env.reset()
+    # iterate until max number of steps per episode is reached
+    for step in range(max_steps):
+        # get action from the current state using policy
+        action = policy(state)
+        # perform the action to get next_state, reward, done, and info
+        next_state, reward, done, info = env.step(action)
+        # add current state to the list of episode states
+        episode[0].append(state)
+
+        # stop conditions before max_steps reached
+        # if the algorithm finds a hole, append reward of -1 & return episode
+        if env.desc.reshape(env.observation_space.n)[next_state] == b'H':
+            episode[1].append(-1)
+            return episode
+        # if the algorithm finds the goal, append reward of 1 & return episode
+        if env.desc.reshape(env.observation_space.n)[next_state] == b'G':
+            episode[1].append(1)
+            return episode
+
+        # otherwise, append 0 for no reward & reset current state to next_state
+        episode[1].append(0)
+        state = next_state
+    # if max_steps reached, return the episode
+    return episode
+
+
+def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
+                alpha=0.1, gamma=0.99):
+    """
+    Performs the Monte Carlo algorithm
+
+    parameters:
+        env: the openAI environment instance
+        V [numpy.ndarray of shape(s,)]: contains the value estimate
+        policy: function that takes in state & returns the next action to take
+        episodes [int]: total number of episodes to train over
+        max_steps [int]: the maximum number of steps per episode
+        alpha [float]: the learning rate
+        gamma [float]: the discount rate
+
+    returns:
+        V: the updated value estimate
+    """
+    discounts = np.array([gamma ** i for i in range(max_steps)])
     for ep in range(episodes):
-        # Reset the environment to get the initial state
-        state = env.reset()
+        episode = generate_episode(env, policy, max_steps)
 
-        # Initialize eligibility traces as a list of zeros for each state
-        eligibility_traces = [0 for _ in range(env.observation_space.n)]
-
-        # Run the episode until completion or max steps are reached
-        for step in range(max_steps):
-            # Decay eligibility traces by lambtha * gamma
-            eligibility_traces = [trace * lambtha * gamma for trace in eligibility_traces]
-
-            # Increment eligibility trace for the current state
-            eligibility_traces[state] += 1
-
-            # Select an action using the policy
-            action = policy(state)
-
-            # Take the action and observe the next state and reward
-            next_state, reward, done, _ = env.step(action)
-
-            # Update the reward based on terminal conditions
-            if env.desc.reshape(env.observation_space.n)[next_state] == b'H':
-                reward = -1  # penalty for falling into a hole
-            elif env.desc.reshape(env.observation_space.n)[next_state] == b'G':
-                reward = 1  # reward for reaching the goal
-
-            # Calculate the temporal-difference error
-            delta_t = reward + gamma * V[next_state] - V[state]
-
-            # Update the value function for the current state
-            V[state] += alpha * delta_t * eligibility_traces[state]
-
-            # If the episode ends, break the loop
-            if done:
-                break
-
-            # Move to the next state
-            state = next_state
-
-    # Return the updated state-value function as a numpy array
-    return np.array(V)
+        for i in range(len(episode[0])):
+            Gt = np.sum(np.array(episode[1][i:]) *
+                        np.array(discounts[:len(episode[1][i:])]))
+            # V(St) = V(St) + alpha * (Gt - V(St))
+            V[episode[0][i]] = (V[episode[0][i]] +
+                                alpha * (Gt - V[episode[0][i]]))
+    return V
