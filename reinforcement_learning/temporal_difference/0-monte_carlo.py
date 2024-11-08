@@ -46,7 +46,6 @@ def generate_episode(env, policy, max_steps):
         # otherwise, append 0 for no reward & reset current state to next_state
         episode[1].append(0)
         state = next_state
-    # if max_steps reached, return the episode
     return episode
 
 
