@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
+""" Contains the monte_carlo_with_eligibility_traces function """
+
+
 import numpy as np
+
 
 def monte_carlo_with_eligibility_traces(env, V, policy, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99, lambtha=0.9):
     """
