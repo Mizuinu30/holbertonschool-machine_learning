@@ -1,79 +1,83 @@
 #!/usr/bin/env python3
-"""
-Defines function to perform the Monte Carlo algorithm
-"""
-
-
 import numpy as np
-
 
 def generate_episode(env, policy, max_steps):
     """
-    Generates an episode using policy
+    Generates an episode by following the given policy in the environment.
 
-    parameters:
-        env: the openAI environment instance
-        policy: function that takes in state & returns the next action to take
-        max_steps: the maximum number of steps per episode
+    Parameters:
+        env: The OpenAI environment instance.
+        policy: A function that takes in a state and returns the next action to take.
+        max_steps: The maximum number of steps per episode.
 
-    returns:
-        returns the episode
+    Returns:
+        episode: A list containing two lists: one for states and one for rewards.
     """
-    # episode = [[state], [rewards]]
+    # Initialize episode structure to store states and rewards
     episode = [[], []]
-    # the first state comes from resetting the environment
+
+    # Start by resetting the environment to get the initial state
     state = env.reset()
-    # iterate until max number of steps per episode is reached
+
+    # Generate the episode by following the policy
     for step in range(max_steps):
-        # get action from the current state using policy
+        # Select an action based on the current policy
         action = policy(state)
-        # perform the action to get next_state, reward, done, and info
-        next_state, reward, done, info = env.step(action)
-        # add current state to the list of episode states
+
+        # Execute the action in the environment
+        next_state, reward, done, _ = env.step(action)
+
+        # Append the current state to the list of states in the episode
         episode[0].append(state)
 
-        # stop conditions before max_steps reached
-        # if the algorithm finds a hole, append reward of -1 & return episode
+        # Adjust rewards for specific conditions (holes and goals)
         if env.desc.reshape(env.observation_space.n)[next_state] == b'H':
-            episode[1].append(-1)
+            episode[1].append(-1)  # Penalty for falling into a hole
             return episode
-        # if the algorithm finds the goal, append reward of 1 & return episode
-        if env.desc.reshape(env.observation_space.n)[next_state] == b'G':
-            episode[1].append(1)
+        elif env.desc.reshape(env.observation_space.n)[next_state] == b'G':
+            episode[1].append(1)  # Reward for reaching the goal
             return episode
+        else:
+            # Append a reward of 0 for non-terminal states
+            episode[1].append(0)
 
-        # otherwise, append 0 for no reward & reset current state to next_state
-        episode[1].append(0)
+        # Transition to the next state
         state = next_state
-    # if max_steps reached, return the episode
+
+    # Return the episode if the maximum steps are reached
     return episode
 
 
-def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
-                alpha=0.1, gamma=0.99):
+def monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99):
     """
-    Performs the Monte Carlo algorithm
+    Performs the Monte Carlo algorithm to estimate the value function.
 
-    parameters:
-        env: the openAI environment instance
-        V [numpy.ndarray of shape(s,)]: contains the value estimate
-        policy: function that takes in state & returns the next action to take
-        episodes [int]: total number of episodes to train over
-        max_steps [int]: the maximum number of steps per episode
-        alpha [float]: the learning rate
-        gamma [float]: the discount rate
+    Parameters:
+        env: The OpenAI environment instance.
+        V: numpy.ndarray of shape (s,), containing the current value estimates, where s is the number of states.
+        policy: A function that takes in a state and returns the next action to take.
+        episodes: int, the total number of episodes to train over (default is 5000).
+        max_steps: int, the maximum number of steps per episode (default is 100).
+        alpha: float, the learning rate for updating the value estimates (default is 0.1).
+        gamma: float, the discount factor (default is 0.99).
 
-    returns:
-        V: the updated value estimate
+    Returns:
+        numpy.ndarray: The updated value estimate V after training.
     """
+    # Pre-compute discount factors for the maximum episode length
     discounts = np.array([gamma ** i for i in range(max_steps)])
+
+    # Loop through each episode
     for ep in range(episodes):
+        # Generate an episode by following the policy
         episode = generate_episode(env, policy, max_steps)
 
-        for i in range(len(episode[0])):
-            Gt = np.sum(np.array(episode[1][i:]) *
-                        np.array(discounts[:len(episode[1][i:])]))
-            # V(St) = V(St) + alpha * (Gt - V(St))
-            V[episode[0][i]] = (V[episode[0][i]] +
-                                alpha * (Gt - V[episode[0][i]]))
+        # Update the value function based on episode returns
+        for i, state in enumerate(episode[0]):
+            # Compute the discounted return Gt from the ith state onward
+            Gt = np.sum(np.array(episode[1][i:]) * discounts[:len(episode[1][i:])])
+
+            # Update the value function for the current state using Gt
+            V[state] += alpha * (Gt - V[state])
+
     return V
