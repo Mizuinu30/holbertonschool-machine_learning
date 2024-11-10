@@ -1,76 +1,85 @@
 #!/usr/bin/env python3
 """This module contains the function for the SARSA(λ) algorithm."""
-
-
 import numpy as np
 
-def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99,
-                  epsilon=1, min_epsilon=0.1, epsilon_decay=0.05):
+def sarsa_lambtha(
+    env,
+    Q,
+    lambtha,
+    episodes=5000,
+    max_steps=100,
+    alpha=0.1,
+    gamma=0.99,
+    epsilon=1,
+    min_epsilon=0.1,
+    epsilon_decay=0.05,
+):
     """
-    Performs SARSA(λ) on a given environment using eligibility traces.
+    Performs the SARSA(λ) algorithm to update the Q table.
 
-    Parameters:
-    env -- the environment instance
-    Q -- a numpy.ndarray of shape (s, a) containing the Q table
-    lambtha -- the eligibility trace factor
-    episodes -- the total number of episodes to train over
-    max_steps -- the maximum number of steps per episode
-    alpha -- the learning rate
-    gamma -- the discount rate
-    epsilon -- the initial threshold for epsilon greedy
-    min_epsilon -- the minimum value that epsilon should decay to
-    epsilon_decay -- the decay rate for updating epsilon between episodes
+    Args:
+        env: The environment instance.
+        Q: A numpy.ndarray of shape (s, a) containing the Q table.
+        lambtha: The eligibility trace factor.
+        episodes: The total number of episodes to train over.
+        max_steps: The maximum number of steps per episode.
+        alpha: The learning rate.
+        gamma: The discount rate.
+        epsilon: The initial threshold for epsilon greedy.
+        min_epsilon: The minimum value that epsilon should decay to.
+        epsilon_decay: The decay rate for updating epsilon between episodes.
 
     Returns:
-    Q -- the updated Q table
+        Q: The updated Q table.
     """
-    # Initialize number of states and actions
-    num_states, num_actions = Q.shape
 
-    # Loop through episodes
+    def epsilon_greedy(state, Q, epsilon):
+        """Selects an action using epsilon-greedy policy."""
+        if np.random.rand() < epsilon:
+            return env.action_space.sample()
+        else:
+            return np.argmax(Q[state])
+
     for episode in range(episodes):
         # Reset the environment to start a new episode
         state = env.reset()
+        if isinstance(state, tuple):
+            state = state[0]
 
-        # Initialize eligibility trace for each state-action pair to zero
-        E = np.zeros((num_states, num_actions))
+        # Select the initial action using epsilon-greedy policy
+        action = epsilon_greedy(state, Q, epsilon)
 
-        # Select the first action using epsilon-greedy policy
-        if np.random.rand() < epsilon:
-            action = np.random.randint(num_actions)
-        else:
-            action = np.argmax(Q[state])
+        # Initialize the eligibility trace to zeros
+        E = np.zeros_like(Q)
 
-        # Loop for each step within an episode
         for step in range(max_steps):
-            # Take action, observe reward and next state
-            next_state, reward, done, _ = env.step(action)
+            # Take the action and observe the next state, reward, and whether the episode is done
+            next_state, reward, terminated, truncated, _ = env.step(action)
+            if isinstance(next_state, tuple):
+                next_state = next_state[0]
 
-            # Choose the next action using epsilon-greedy policy
-            if np.random.rand() < epsilon:
-                next_action = np.random.randint(num_actions)
-            else:
-                next_action = np.argmax(Q[next_state])
+            # Select the next action using epsilon-greedy policy
+            next_action = epsilon_greedy(next_state, Q, epsilon)
 
-            # Calculate TD error (delta)
-            td_error = reward + gamma * Q[next_state, next_action] - Q[state, action]
+            # Calculate the TD error
+            delta = reward + gamma * Q[next_state, next_action] - Q[state, action]
 
-            # Update eligibility trace for the current state-action pair
+            # Update the eligibility trace for the current state-action pair
             E[state, action] += 1
 
-            # Update Q values and eligibility traces for all state-action pairs
-            Q += alpha * td_error * E
-            E *= gamma * lambtha  # Decay eligibility traces
+            # Update the Q table and eligibility trace for all state-action pairs
+            Q += alpha * delta * E
+            E *= gamma * lambtha
+
+            # If the episode is terminated or truncated, end the episode
+            if terminated or truncated:
+                break
 
             # Move to the next state and action
             state = next_state
             action = next_action
 
-            # Break if episode is finished
-            if done:
-                break
-
         # Decay epsilon after each episode
-        epsilon = max(min_epsilon, epsilon * np.exp(-epsilon_decay))
+        epsilon = max(min_epsilon, epsilon * np.exp(-epsilon_decay * episode))
 
     return Q
