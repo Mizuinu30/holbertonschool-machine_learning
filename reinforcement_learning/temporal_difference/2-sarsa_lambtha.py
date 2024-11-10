@@ -2,6 +2,7 @@
 """This module contains the function for the SARSA(λ) algorithm."""
 import numpy as np
 
+
 def sarsa_lambtha(
     env,
     Q,
@@ -53,7 +54,8 @@ def sarsa_lambtha(
         E = np.zeros_like(Q)
 
         for step in range(max_steps):
-            # Take the action and observe the next state, reward, and whether the episode is done
+            # Take the action and observe the next state,
+            # reward, and whether the episode is done
             next_state, reward, terminated, truncated, _ = env.step(action)
             if isinstance(next_state, tuple):
                 next_state = next_state[0]
@@ -62,12 +64,14 @@ def sarsa_lambtha(
             next_action = epsilon_greedy(next_state, Q, epsilon)
 
             # Calculate the TD error
-            delta = reward + gamma * Q[next_state, next_action] - Q[state, action]
+            delta = reward + gamma * Q[next_state,
+                                       next_action] - Q[state, action]
 
             # Update the eligibility trace for the current state-action pair
             E[state, action] += 1
 
-            # Update the Q table and eligibility trace for all state-action pairs
+            # Update the Q table and eligibility trace
+            # for all state-action pairs
             Q += alpha * delta * E
             E *= gamma * lambtha
 
