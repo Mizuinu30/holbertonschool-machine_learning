@@ -1,43 +1,47 @@
 #!/usr/bin/env python3
-"""This module contains the function for the Monte Carlo algorithm."""
+"""
+Monte Carlo policy evaluation for the FrozenLake8x8 environment.
+This module provides a function to estimate the state-value function
+for a given policy using a Monte Carlo approach.
+"""
 
 import numpy as np
 
 
-def monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1,
-                gamma=0.99):
+def monte_carlo(env, V, policy, gamma=0.99, episodes=10000):
     """
-    Performs the Monte Carlo algorithm for estimating the value function.
+    Estimates the state-value function using Monte Carlo method.
+
+    Args:
+        env: Gymnasium environment.
+        V (np.array): Initial value function.
+        policy (function): Policy function for choosing actions.
+        gamma (float): Discount factor.
+        episodes (int): Number of episodes for evaluation.
+
+    Returns:
+        np.array: Updated value function.
     """
-    for episode in range(episodes):
+    # Initialize return tracking for each state
+    returns = {s: [] for s in range(env.observation_space.n)}
+
+    for _ in range(episodes):
+        # Generate an episode
+        episode = []
         state = env.reset()[0]
-        episode_data = []
-
-        for step in range(max_steps):
-            # select action based on policy
+        done = False
+        while not done:
             action = policy(state)
-
-            # take action
-            next_state, reward, terminated, truncated, _ = env.step(
-                action)
-
-            # Append state and reward to the episode history
-            episode_data.append((state, reward))
-
-            if terminated or truncated:
-                break
-
-            # move to the next state
+            next_state, reward, done, _, _ = env.step(action)
+            episode.append((state, reward))
             state = next_state
 
+        # Calculate returns and update V
         G = 0
-        episode_data = np.array(episode_data, dtype=int)
-
-        for state, reward in reversed(episode_data):
+        for state, reward in reversed(episode):
             G = reward + gamma * G
-
-            # if this is a novel state
-            if state not in episode_data[:episode, 0]:
-                V[state] = V[state] + alpha * (G - V[state])
+            if state not in [x[0] for x in episode[:-1]]:
+                returns[state].append(G)
+                V[state] = np.mean(returns[state])
 
     return V
