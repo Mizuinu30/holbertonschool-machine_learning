@@ -1,89 +1,47 @@
 #!/usr/bin/env python3
-"""This module contains the function for the SARSA(λ) algorithm."""
+""" Have a function perform SARSA(λ) """
+
 import numpy as np
 
 
-def sarsa_lambtha(
-    env,
-    Q,
-    lambtha,
-    episodes=5000,
-    max_steps=100,
-    alpha=0.1,
-    gamma=0.99,
-    epsilon=1,
-    min_epsilon=0.1,
-    epsilon_decay=0.05,
-):
+def epsilon_greedy(Q, state, epsilon):
+    """ Determine next action to take using epsilon-greedy
     """
-    Performs the SARSA(λ) algorithm to update the Q table.
+    if np.random.uniform(0, 1) < epsilon:
+        return np.random.randint(0, Q.shape[1])
+    else:
+        return np.argmax(Q[state])
 
-    Args:
-        env: The environment instance.
-        Q: A numpy.ndarray of shape (s, a) containing the Q table.
-        lambtha: The eligibility trace factor.
-        episodes: The total number of episodes to train over.
-        max_steps: The maximum number of steps per episode.
-        alpha: The learning rate.
-        gamma: The discount rate.
-        epsilon: The initial threshold for epsilon greedy.
-        min_epsilon: The minimum value that epsilon should decay to.
-        epsilon_decay: The decay rate for updating epsilon between episodes.
 
-    Returns:
-        Q: The updated Q table.
+def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
+                  alpha=0.1, gamma=0.99, epsilon=1,
+                  min_epsilon=0.1, epsilon_decay=0.05):
+    """ Performs SARSA(λ)
     """
-
-    def epsilon_greedy(state, Q, epsilon):
-        """Selects an action using epsilon-greedy policy."""
-        if np.random.rand() < epsilon:
-            return env.action_space.sample()
-        else:
-            return np.argmax(Q[state])
+    fepsilon = epsilon
 
     for episode in range(episodes):
-        # Reset the environment to start a new episode
-        state = env.reset()
-        if isinstance(state, tuple):
-            state = state[0]
+        es = np.zeros_like(Q)
+        state = env.reset()[0]
+        action = epsilon_greedy(Q, state, epsilon)
 
-        # Select the initial action using epsilon-greedy policy
-        action = epsilon_greedy(state, Q, epsilon)
+        for _ in range(max_steps):
+            ns, r, term, trunc, _ = env.step(action)
 
-        # Initialize the eligibility trace to zeros
-        E = np.zeros_like(Q)
+            naction = epsilon_greedy(Q, ns, epsilon)
+            δ = r + gamma * Q[ns, naction] - Q[state, action]
+            es[state, action] += 1
+            es *= lambtha * gamma
+            Q += alpha * δ * es
 
-        for step in range(max_steps):
-            # Take the action and observe the next state,
-            # reward, and whether the episode is done
-            next_state, reward, terminated, truncated, _ = env.step(action)
-            if isinstance(next_state, tuple):
-                next_state = next_state[0]
-
-            # Select the next action using epsilon-greedy policy
-            next_action = epsilon_greedy(next_state, Q, epsilon)
-
-            # Calculate the TD error
-            delta = reward + gamma * Q[next_state,
-                                       next_action] - Q[state, action]
-
-            # Update the eligibility trace for the current state-action pair
-            E[state, action] += 1
-
-            # Update the Q table and eligibility trace
-            # for all state-action pairs
-            Q += alpha * delta * E
-            E *= gamma * lambtha
-
-            # If the episode is terminated or truncated, end the episode
-            if terminated or truncated:
+            if term or trunc:
                 break
 
-            # Move to the next state and action
-            state = next_state
-            action = next_action
+            state = ns
+            action = naction
 
-        # Decay epsilon after each episode
-        epsilon = max(min_epsilon, epsilon * np.exp(-epsilon_decay * episode))
+            epsilon_range = fepsilon - min_epsilon
+            decay_factor = np.exp(-epsilon_decay * episode)
 
+        epsilon = min_epsilon + epsilon_range * decay_factor
     return Q
