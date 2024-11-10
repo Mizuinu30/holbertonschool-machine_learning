@@ -1,35 +1,56 @@
 #!/usr/bin/env python3
-"""This module contains the function for the TD(lambda) algorithm."""
-
+"""This module contains the function for the TD(λ) algorithm."""
 import numpy as np
 
 
 def td_lambtha(env, V, policy, lambtha=0.9, episodes=5000, max_steps=100,
-               alpha=0.1, gamma = 0.99):
+               alpha=0.1, gamma=0.99):
     """
-    Performs the TD(lambda) algorithm for estimating the value function.
+    Performs the TD(λ) algorithm for estimating the value function.
+
+    Parameters:
+        env: Environment instance.
+        V: numpy.ndarray of shape (s,) containing the value estimates.
+        policy: Function that takes a state and returns the next action to take
+        lambtha: The eligibility trace decay parameter.
+        episodes: Total number of episodes to train over.
+        max_steps: Maximum number of steps per episode.
+        alpha: Learning rate.
+        gamma: Discount rate.
+
+    Returns:
+        Updated value estimates V.
     """
     for episode in range(episodes):
+        # reset the environment and get initial state
         state = env.reset()[0]
 
-    eligibity_trace = np.zeros_like(V)
+        # Init. eligibility traces to zero, for all states
+        eligibility_traces = np.zeros_like(V)
 
-    for step in range(max_steps):
-        action = policy(state)
+        for step in range(max_steps):
+            # Select action based on policy
+            action = policy(state)
 
-        next_state, reward, terminated, truncated, _ = env.step(action)
+            # Take action
+            next_state, reward, terminated, truncated, _ = env.step(action)
 
-        delta = reward + (gamma * V[next_state] - V[state])
+            # TD Error (δ): reward + gamma * V(next_state) - V(state)
+            delta = reward + (gamma * V[next_state] - V[state])
 
-        eligibity_trace[state] += 1
+            # Update eligibility trace for the current state
+            eligibility_traces[state] += 1
 
-        V += alpha * delta * eligibity_trace
+            # Update each state's value and eligibility trace
+            V += alpha * delta * eligibility_traces
 
-        eligibity_traces *= gamma * lambtha
+            # Apply lambtha decay to eligibility traces
+            eligibility_traces *= gamma * lambtha
 
-        state = next_state
+            # Move to the next state
+            state = next_state
 
-        if terminated or truncated:
-            break
+            if terminated or truncated:
+                break
 
     return V
