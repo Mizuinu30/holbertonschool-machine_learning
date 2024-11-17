@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"Compute the policy using the weight matrix and the state matrix."
+
 import numpy as np
 
 
