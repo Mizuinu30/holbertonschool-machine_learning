@@ -1,45 +1,29 @@
 #!/usr/bin/env python3
+"""
+Compute the Monte-Carlo policy gradient
+"""
 import numpy as np
+
 
 def policy(matrix, weight):
     """
-    Computes the policy using a weight matrix and a given state matrix.
-    Uses the softmax function to compute the probability distribution.
-
-    Args:
-        matrix (ndarray): State matrix.
-        weight (ndarray): Weight matrix.
-
-    Returns:
-        ndarray: Probability distribution for actions.
+    Computes a stochastic policy by taking a weighted combination of the
+    state and weight matrices and applying a softmax function.
     """
-    z = np.dot(matrix, weight)
-    exp = np.exp(z - np.max(z))
-    return exp / exp.sum(axis=1, keepdims=True)
+    weighted_states = (matrix @ weight)
+    e_x = np.exp(weighted_states - np.max(weighted_states))
+    return e_x / np.sum(e_x)
+
 
 def policy_gradient(state, weight):
     """
-    Computes the Monte-Carlo policy gradient based on a state and weight matrix.
-
-    Args:
-        state (ndarray): Current state of the environment (1D array).
-        weight (ndarray): Weight matrix for computing policy.
-
-    Returns:
-        int: Selected action.
-        ndarray: Gradient for the policy.
+    Computes the Monte-Carlo policy gradient based on a state and a
+    weight matrix.
     """
-    # Compute policy probabilities
-    probs = policy(state[np.newaxis, :], weight)
+    action_probs = policy(state, weight)
+    action = np.random.choice(len(action_probs), p=action_probs)
+    d_softmax = action_probs.copy()
+    d_softmax[action] -= 1
+    grad = -np.outer(state, d_softmax)
 
-    # Sample an action based on the probability distribution
-    action = np.random.choice(len(probs[0]), p=probs[0])
-
-    # Compute the gradient
-    d_softmax = np.diag(probs[0]) - np.outer(probs[0], probs[0])
-    gradient = state[:, np.newaxis] * d_softmax[:, action]
-
-    # Scale the gradient correctly
-    gradient *= 2  # Adjusting the scaling to match the desired output
-
-    return action, gradient
+    return action, grad
