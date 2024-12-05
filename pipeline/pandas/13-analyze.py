@@ -8,6 +8,6 @@ def analyze(df):
     """ This function analyzes data in a DataFrame """
 
     if "Timestamp" in df.columns:
-            df = df.drop(columns=["Timestamp"])
+        df = df.drop(columns=["Timestamp"])
 
     return df.describe()
