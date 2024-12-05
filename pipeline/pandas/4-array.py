@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-"""
-New code updates the script to take the last 10 columns of High and Close
-   and converts them into numpy.ndarray
-"""
-
-import pandas as pd
+"""This module converts a dataframe to a numpy array"""
 
 
 def array(df):
-    """ This function takes the last 10 columns of High and Close and"""
+    """This function converts a dataframe to a numpy array.
 
-    return df[["High", "Close"]].tail(10).to_numpy()
+    Args:
+        df: the dataframe to convert
+
+    Returns:
+        The numpy array
+    """
+    # Return the last 10 rows of the columns 'High' and 'Close'
+    # as a numpy array
+    return df[['High', 'Close']].tail(10).to_numpy()
