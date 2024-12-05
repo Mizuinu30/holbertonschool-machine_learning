@@ -1,20 +1,26 @@
 #!/usr/bin/env python3
-"""
-New code updates Pandas DataFrame script to:
-- rename the column Timestamp to Datetime
-- convert the timestamp values into datetime values
-- display only the Datetime and Close columns
-"""
-
-
+"""This module renames a column of a dataframe"""
 import pandas as pd
 
-from_file = __import__('2-from_file').from_file
 
-df = from_file('coinbaseUSD_1-min_data_2014-12-01_to_2019-01-09.csv', ',')
+def rename(df):
+    """This function renames the column Timestamp to Datetime,
+    converts the timestamp values to datetime values,
+    and displays only the Datetime and Close columns.
 
-df = df.rename(columns={'Timestamp': 'Datetime'})
-df['Datetime'] = pd.to_datetime(df['Datetime'], unit='s')
-df = df.loc[:, ['Datetime', 'Close']]
+    Args:
+        df: the dataframe to modify
 
-print(df.tail())
+    Returns:
+        The modified dataframe
+    """
+    # Rename the column 'Timestamp' to 'Datetime'
+    df = df.rename(columns={'Timestamp': 'Datetime'})
+
+    # Convert the 'Datetime' column to datetime objects
+    df['Datetime'] = pd.to_datetime(df['Datetime'], unit='s')
+
+    # Display only the 'Datetime' and 'Close' columns
+    df = df[['Datetime', 'Close']]
+
+    return df
