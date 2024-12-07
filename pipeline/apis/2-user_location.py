@@ -56,10 +56,8 @@ if __name__ == '__main__':
             location = user_data.get('location', 'Location not available')
             print(location)
 
-        # Handle unexpected status codes
         else:
             print(f"Unexpected status code: {response.status_code}")
 
-    # Handle potential request exceptions
     except requests.exceptions.RequestException as e:
         print(f"Error: {e}")
