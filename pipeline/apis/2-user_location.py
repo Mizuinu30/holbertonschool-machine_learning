@@ -36,23 +36,17 @@ if __name__ == '__main__':
         # Send a GET request to the provided API URL
         response = requests.get(api_url)
 
-        # Handle case where rate limit is exceeded
         if response.status_code == 403:
-            # Extract the reset time from the headers, defaulting to the current time if unavailable
             reset_time = int(response.headers.get('X-RateLimit-Reset', time.time()))
-            # Calculate the remaining time until reset in minutes
             reset_in_minutes = int((reset_time - time.time()) / 60)
             print(f"Reset in {reset_in_minutes} min")
 
-        # Handle case where the user is not found
         elif response.status_code == 404:
             print("Not found")
 
-        # Handle successful response (status code 200)
         elif response.status_code == 200:
             # Parse the JSON response
             user_data = response.json()
-            # Extract the location field, with a fallback message if not available
             location = user_data.get('location', 'Location not available')
             print(location)
 
