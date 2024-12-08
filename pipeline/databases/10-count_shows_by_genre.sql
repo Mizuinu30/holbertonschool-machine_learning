@@ -2,15 +2,13 @@
 -- Results are sorted by the number of shows linked in descending order
 
 SELECT
-    genres.name AS genre,
-    COUNT(tv_show_genres.show_id) AS number_of_shows
+    tg.name AS genre,
+    COUNT(tsg.genre_id) AS number_of_shows
 FROM
-    genres
-JOIN
-    tv_show_genres
-ON
-    genres.id = tv_show_genres.genre_id
+    tv_genres tg, tv_show_genres tsg
+WHERE
+    tg.id = tsg.genre_id
 GROUP BY
-    genres.id, genres.name
+    genre
 ORDER BY
     number_of_shows DESC;
