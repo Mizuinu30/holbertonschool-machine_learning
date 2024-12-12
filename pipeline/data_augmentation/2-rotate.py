@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+Defines function that rotates an image 90 degrees counter-clockwise
 """
 
 
