@@ -5,6 +5,7 @@ Defines function that changes the contrast of an image
 
 import tensorflow as tf
 
+
 def change_contrast(image, lower, upper):
     """
     Changes the contrast of an image
@@ -17,5 +18,6 @@ def change_contrast(image, lower, upper):
     Returns:
         the adjusted image
     """
+
     contrast_factor = tf.random.uniform([], lower, upper)
     return tf.image.adjust_contrast(image, contrast_factor)
